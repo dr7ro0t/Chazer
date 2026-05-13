@@ -331,8 +331,18 @@ impl Declaration {
         // Simple wildcard matching
         if let Some(suffix) = pattern.strip_prefix('*') {
             self.name.ends_with(suffix)
+                || self
+                    .fully_qualified_name
+                    .as_ref()
+                    .map(|fqn| fqn.ends_with(suffix))
+                    .unwrap_or(false)
         } else if let Some(prefix) = pattern.strip_suffix('*') {
             self.name.starts_with(prefix)
+                || self
+                    .fully_qualified_name
+                    .as_ref()
+                    .map(|fqn| fqn.starts_with(prefix))
+                    .unwrap_or(false)
         } else {
             self.name == pattern
                 || self
@@ -418,5 +428,29 @@ mod tests {
         assert!(decl.matches_pattern("Main*"));
         assert!(decl.matches_pattern("MainActivity"));
         assert!(!decl.matches_pattern("*Fragment"));
+    }
+
+    #[test]
+    fn test_matches_pattern_fqn_wildcard() {
+        let mut decl = Declaration::new(
+            DeclarationId::new(PathBuf::from("test.kt"), 0, 100),
+            "BaseBlurRadius".to_string(),
+            DeclarationKind::Class,
+            Location::new(PathBuf::from("test.kt"), 1, 1, 0, 100),
+            Language::Kotlin,
+        );
+        decl.fully_qualified_name = Some("com.whatnot.wds.token.base.BaseBlurRadius".to_string());
+
+        // Prefix wildcard should match against FQN
+        assert!(decl.matches_pattern("com.whatnot.wds.*"));
+        assert!(decl.matches_pattern("com.whatnot.wds.token.*"));
+        assert!(!decl.matches_pattern("com.other.package.*"));
+
+        // Suffix wildcard should match against FQN
+        assert!(decl.matches_pattern("*BlurRadius"));
+        assert!(decl.matches_pattern("*BaseBlurRadius"));
+
+        // Exact FQN match
+        assert!(decl.matches_pattern("com.whatnot.wds.token.base.BaseBlurRadius"));
     }
 }
