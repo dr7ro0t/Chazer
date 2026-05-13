@@ -494,7 +494,7 @@ fn run_analysis_internal(
     let entry_points = entry_detector.detect(&graph, path)?;
 
     // Load ProGuard data if available
-    let proguard_data = if let Some(ref usage_path) = proguard_usage {
+    let proguard_data = if let Some(usage_path) = proguard_usage {
         ProguardUsage::parse(usage_path).ok()
     } else {
         None
@@ -543,7 +543,7 @@ fn run_analysis_internal(
         .collect();
 
     // Apply baseline filter
-    let dead_code = if let Some(ref bp) = baseline_path {
+    let dead_code = if let Some(bp) = baseline_path {
         match baseline::Baseline::load(bp) {
             Ok(baseline) => {
                 let stats = baseline.stats(&dead_code, path);
