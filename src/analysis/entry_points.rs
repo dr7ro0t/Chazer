@@ -380,7 +380,12 @@ impl<'a> EntryPointDetector<'a> {
                 "Data binding method ref: {}.{}",
                 method_ref.class_fqn, method_ref.method_name
             );
-            self.add_method_reference(graph, &method_ref.class_fqn, &method_ref.method_name, entry_points);
+            self.add_method_reference(
+                graph,
+                &method_ref.class_fqn,
+                &method_ref.method_name,
+                entry_points,
+            );
         }
     }
 
@@ -404,7 +409,7 @@ impl<'a> EntryPointDetector<'a> {
         if let Some(class) = class_decl {
             // Find the method as a child of this class
             let children = graph.get_children(&class.id);
-            for child in children {
+            for &child in &children {
                 if let Some(child_decl) = graph.get_declaration(child) {
                     if child_decl.name == method_name {
                         debug!(
@@ -438,7 +443,9 @@ impl<'a> EntryPointDetector<'a> {
             if method_name.starts_with("on") && method_name.len() > 3 {
                 info!(
                     "Data binding: could not find method {} in class {} (children: {})",
-                    method_name, class_fqn, children.len()
+                    method_name,
+                    class_fqn,
+                    children.len()
                 );
             }
         } else {
@@ -497,6 +504,9 @@ impl<'a> EntryPointDetector<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::graph::{Declaration, DeclarationId, DeclarationKind, Graph, Language, Location};
+    use std::collections::HashSet;
+    use std::path::PathBuf;
 
     #[test]
     fn test_is_entry_point_annotation() {
@@ -507,5 +517,52 @@ mod tests {
         assert!(detector.is_entry_point_annotation("@Composable"));
         assert!(detector.is_entry_point_annotation("@HiltViewModel"));
         assert!(!detector.is_entry_point_annotation("@Override"));
+    }
+
+    #[test]
+    fn test_add_method_reference_detection() {
+        let mut graph = Graph::new();
+        let config = Config::default();
+        let detector = EntryPointDetector::new(&config);
+
+        // 1. Create a class
+        let class_id = DeclarationId::new(PathBuf::from("MyViewModel.kt"), 0, 100);
+        let class_location = Location::new(PathBuf::from("MyViewModel.kt"), 1, 1, 0, 100);
+        let mut class_decl = Declaration::new(
+            class_id.clone(),
+            "MyViewModel".to_string(),
+            DeclarationKind::Class,
+            class_location.clone(),
+            Language::Kotlin,
+        );
+        class_decl.fully_qualified_name = Some("com.example.MyViewModel".to_string());
+        graph.add_declaration(class_decl);
+
+        // 2. Create a method in that class
+        let method_id = DeclarationId::new(PathBuf::from("MyViewModel.kt"), 50, 80);
+        let method_location = Location::new(PathBuf::from("MyViewModel.kt"), 5, 5, 50, 80);
+        let mut method_decl = Declaration::new(
+            method_id.clone(),
+            "onClicked".to_string(),
+            DeclarationKind::Method,
+            method_location,
+            Language::Kotlin,
+        );
+        method_decl.parent = Some(class_id.clone());
+        graph.add_declaration(method_decl);
+
+        // 3. Test detection
+        let mut entry_points = HashSet::new();
+        detector.add_method_reference(
+            &graph,
+            "com.example.MyViewModel",
+            "onClicked",
+            &mut entry_points,
+        );
+
+        assert!(
+            entry_points.contains(&method_id),
+            "Entry points should contain the method detected from data binding"
+        );
     }
 }
