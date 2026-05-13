@@ -9,6 +9,9 @@ use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use crate::analysis::{DeadCode, DeadCodeIssue};
+use crate::graph::{Declaration, DeclarationId, DeclarationKind, Language, Location};
+
 /// Represents an Android resource
 #[derive(Debug, Clone)]
 pub struct AndroidResource {
@@ -30,7 +33,7 @@ pub struct ResourceAnalysis {
     /// Resources referenced in code
     pub referenced: HashSet<(String, String)>, // (type, name)
     /// Unused resources (defined but not referenced)
-    pub unused: Vec<AndroidResource>,
+    pub unused: Vec<DeadCode>,
 }
 
 /// Detector for unused Android resources
@@ -68,16 +71,37 @@ impl ResourceDetector {
                 {
                     // Check for common false positives
                     if !self.should_skip_resource(name, res_type) {
-                        analysis.unused.push(resource.clone());
+                        let location = Location::new(resource.file.clone(), resource.line, 1, 0, 0);
+
+                        let decl = Declaration::new(
+                            DeclarationId::new(resource.file.clone(), 0, 0),
+                            resource.name.clone(),
+                            DeclarationKind::Resource,
+                            location,
+                            Language::Xml,
+                        );
+
+                        let mut dead = DeadCode::new(decl, DeadCodeIssue::UnusedResource);
+                        dead.message = format!("Unused Android {}: '{}'", res_type, name);
+                        analysis.unused.push(dead);
                     }
                 }
             }
         }
 
         // Sort by file and line
-        analysis
-            .unused
-            .sort_by(|a, b| a.file.cmp(&b.file).then(a.line.cmp(&b.line)));
+        analysis.unused.sort_by(|a, b| {
+            a.declaration
+                .location
+                .file
+                .cmp(&b.declaration.location.file)
+                .then(
+                    a.declaration
+                        .location
+                        .line
+                        .cmp(&b.declaration.location.line),
+                )
+        });
 
         analysis
     }
@@ -341,5 +365,53 @@ mod tests {
         let strings = analysis.defined.get("string").unwrap();
         assert!(strings.contains_key("test_string"));
         assert!(strings.contains_key("another_string"));
+    }
+
+    #[test]
+    fn test_resource_to_dead_code() {
+        let temp_dir = TempDir::new().unwrap();
+        let strings_xml = temp_dir.path().join("strings.xml");
+        fs::write(
+            &strings_xml,
+            r#"<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="unused_string">Unused</string>
+</resources>"#,
+        )
+        .unwrap();
+
+        let mut analysis = ResourceAnalysis::default();
+        let detector = ResourceDetector::new();
+        detector.parse_values_xml(&strings_xml, &mut analysis);
+
+        // Manually trigger the conversion logic that would happen in analyze()
+        for (res_type, resources) in &analysis.defined {
+            for (name, resource) in resources {
+                let location = Location::new(resource.file.clone(), resource.line, 1, 0, 0);
+
+                let decl = Declaration::new(
+                    DeclarationId::new(resource.file.clone(), 0, 0),
+                    resource.name.clone(),
+                    DeclarationKind::Resource,
+                    location,
+                    Language::Xml,
+                );
+
+                let mut dead = DeadCode::new(decl, DeadCodeIssue::UnusedResource);
+                dead.message = format!("Unused Android {}: '{}'", res_type, name);
+                analysis.unused.push(dead);
+            }
+        }
+
+        assert_eq!(analysis.unused.len(), 1);
+        let dead = &analysis.unused[0];
+
+        assert_eq!(dead.declaration.name, "unused_string");
+        assert_eq!(dead.issue, DeadCodeIssue::UnusedResource);
+        assert_eq!(dead.declaration.kind, DeclarationKind::Resource);
+        assert_eq!(dead.declaration.language, Language::Xml);
+        assert!(dead
+            .message
+            .contains("Unused Android string: 'unused_string'"));
     }
 }

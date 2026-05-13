@@ -175,10 +175,12 @@ pub enum DeadCodeIssue {
     /// Using size == 0 instead of isEmpty()
     PreferIsEmpty,
 
+    /// Android resource is never referenced (Phase 12)
+    UnusedResource,
+
     // ==========================================================================
     // Anti-Pattern Detectors (inspired by common Android code smells)
     // ==========================================================================
-
     /// Kotlin object with mutable public properties (global mutable state)
     GlobalMutableState,
 
@@ -212,7 +214,6 @@ pub enum DeadCodeIssue {
     // ==========================================================================
     // Phase 2: Performance & Memory Detectors
     // ==========================================================================
-
     /// Memory leak risk (static Context/Activity references)
     MemoryLeakRisk,
 
@@ -231,7 +232,6 @@ pub enum DeadCodeIssue {
     // ==========================================================================
     // Phase 3: Architecture & Design Detectors
     // ==========================================================================
-
     /// Public MutableLiveData/MutableStateFlow (encapsulation violation)
     MutableStateExposed,
 
@@ -250,7 +250,6 @@ pub enum DeadCodeIssue {
     // ==========================================================================
     // Phase 4: Kotlin-Specific Anti-Patterns
     // ==========================================================================
-
     /// Excessive force unwrap (!!) or redundant null checks
     NullabilityOverload,
 
@@ -269,7 +268,6 @@ pub enum DeadCodeIssue {
     // ==========================================================================
     // Phase 5: Android-Specific Code Smells
     // ==========================================================================
-
     /// Resource (Cursor, Stream) not properly closed
     UnclosedResource,
 
@@ -288,7 +286,6 @@ pub enum DeadCodeIssue {
     // ==========================================================================
     // Phase 6: Compose-Specific Detectors
     // ==========================================================================
-
     /// State without remember {} wrapper (resets on recomposition)
     StateWithoutRemember,
 
@@ -321,6 +318,7 @@ impl DeadCodeIssue {
             DeadCodeIssue::RedundantThis => Severity::Info,
             DeadCodeIssue::RedundantParentheses => Severity::Info,
             DeadCodeIssue::PreferIsEmpty => Severity::Info,
+            DeadCodeIssue::UnusedResource => Severity::Warning,
             DeadCodeIssue::GlobalMutableState => Severity::Warning,
             DeadCodeIssue::DeepInheritance => Severity::Warning,
             DeadCodeIssue::SingleImplInterface => Severity::Info,
@@ -395,6 +393,9 @@ impl DeadCodeIssue {
                     "Override '{}' may be redundant (only calls super)",
                     decl.name
                 )
+            }
+            DeadCodeIssue::UnusedResource => {
+                format!("Android resource '{}' is never used", decl.name)
             }
             DeadCodeIssue::WriteOnlyPreference => {
                 format!(
@@ -658,6 +659,7 @@ impl DeadCodeIssue {
             DeadCodeIssue::RedundantThis => "DC014",
             DeadCodeIssue::RedundantParentheses => "DC015",
             DeadCodeIssue::PreferIsEmpty => "DC016",
+            DeadCodeIssue::UnusedResource => "DC017",
             DeadCodeIssue::GlobalMutableState => "AP001",
             DeadCodeIssue::DeepInheritance => "AP002",
             DeadCodeIssue::SingleImplInterface => "AP003",

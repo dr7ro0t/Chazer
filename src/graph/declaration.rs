@@ -50,6 +50,9 @@ pub enum DeclarationKind {
     // Imports
     Import,
 
+    // Resources
+    Resource,
+
     // Other
     Package,
     File,
@@ -101,6 +104,7 @@ impl DeclarationKind {
             DeclarationKind::Field => "field",
             DeclarationKind::Parameter => "parameter",
             DeclarationKind::Import => "import",
+            DeclarationKind::Resource => "resource",
             DeclarationKind::Package => "package",
             DeclarationKind::File => "file",
         }
@@ -231,6 +235,7 @@ pub struct Declaration {
 pub enum Language {
     Kotlin,
     Java,
+    Xml,
 }
 
 impl Declaration {

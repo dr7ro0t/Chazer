@@ -110,6 +110,7 @@ impl Aggregator {
             DeadCodeIssue::RedundantThis => "Redundant this".to_string(),
             DeadCodeIssue::RedundantParentheses => "Redundant parentheses".to_string(),
             DeadCodeIssue::PreferIsEmpty => "Prefer isEmpty()".to_string(),
+            DeadCodeIssue::UnusedResource => "Unused Android resources".to_string(),
 
             // Architecture patterns
             DeadCodeIssue::DeepInheritance => "Deep inheritance hierarchies".to_string(),
@@ -134,7 +135,9 @@ impl Aggregator {
             DeadCodeIssue::MemoryLeakRisk => "Memory leak risks".to_string(),
             DeadCodeIssue::LongMethod => "Long methods".to_string(),
             DeadCodeIssue::LargeClass => "Large classes".to_string(),
-            DeadCodeIssue::CollectionWithoutSequence => "Collections without asSequence()".to_string(),
+            DeadCodeIssue::CollectionWithoutSequence => {
+                "Collections without asSequence()".to_string()
+            }
             DeadCodeIssue::ObjectAllocationInLoop => "Object allocation in loops".to_string(),
 
             // Android patterns
@@ -175,7 +178,8 @@ impl Aggregator {
             | DeadCodeIssue::RedundantNullInit
             | DeadCodeIssue::RedundantThis
             | DeadCodeIssue::RedundantParentheses
-            | DeadCodeIssue::PreferIsEmpty => "Dead Code",
+            | DeadCodeIssue::PreferIsEmpty
+            | DeadCodeIssue::UnusedResource => "Dead Code",
 
             DeadCodeIssue::DeepInheritance
             | DeadCodeIssue::EventBusPattern
@@ -313,6 +317,35 @@ mod tests {
         assert_eq!(
             Aggregator::category_for_issue(&DeadCodeIssue::ViewLogicInViewModel),
             "Android"
+        );
+    }
+
+    #[test]
+    fn test_unused_resource_aggregation() {
+        use crate::analysis::{DeadCode, DeadCodeIssue};
+        use crate::graph::{Declaration, DeclarationId, DeclarationKind, Language, Location};
+        use std::path::PathBuf;
+
+        let decl = Declaration::new(
+            DeclarationId::new(PathBuf::from("res/values/strings.xml"), 0, 0),
+            "unused_str".to_string(),
+            DeclarationKind::Resource,
+            Location::new(PathBuf::from("res/values/strings.xml"), 10, 1, 0, 0),
+            Language::Xml,
+        );
+        let dead = DeadCode::new(decl, DeadCodeIssue::UnusedResource);
+        let findings = vec![dead];
+
+        let aggregator = Aggregator::new();
+        let results = aggregator.aggregate(findings);
+        let groups = results.by_rule;
+
+        assert_eq!(groups.len(), 1);
+        assert_eq!(groups[0].issue, DeadCodeIssue::UnusedResource);
+        assert_eq!(groups[0].description, "Unused Android resources");
+        assert_eq!(
+            Aggregator::category_for_issue(&groups[0].issue),
+            "Dead Code"
         );
     }
 }

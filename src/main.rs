@@ -21,30 +21,52 @@ mod watch;
 use proguard::{ProguardUsage, ReportGenerator};
 
 use analysis::detectors::{
-    // Core detectors
-    Detector, RedundantOverrideDetector, UnusedIntentExtraDetector, UnusedParamDetector,
-    UnusedSealedVariantDetector, WriteOnlyDetector,
-    // Anti-pattern detectors (AP001-AP006)
-    DeepInheritanceDetector, EventBusPatternDetector, GlobalMutableStateDetector,
-    SingleImplInterfaceDetector,
-    // Phase 1: Kotlin patterns (AP007-AP010)
-    GlobalScopeUsageDetector, HeavyViewModelDetector, LateinitAbuseDetector,
-    ScopeFunctionChainingDetector,
-    // Phase 2: Performance & Memory (AP011-AP015)
-    CollectionWithoutSequenceDetector, LargeClassDetector, LongMethodDetector,
-    MemoryLeakRiskDetector, ObjectAllocationInLoopDetector,
-    // Phase 3: Architecture & Design (AP016-AP020)
-    HardcodedDispatcherDetector, MissingUseCaseDetector, MutableStateExposedDetector,
-    NestedCallbackDetector, ViewLogicInViewModelDetector,
-    // Phase 4: Kotlin-Specific (AP021-AP025)
-    ComplexConditionDetector, LongParameterListDetector, NullabilityOverloadDetector,
-    ReflectionOveruseDetector, StringLiteralDuplicationDetector,
     // Phase 5: Android-Specific (AP026-AP030)
-    AsyncTaskUsageDetector, InitOnDrawDetector, MainThreadDatabaseDetector,
-    UnclosedResourceDetector, WakeLockAbuseDetector,
+    AsyncTaskUsageDetector,
     // Phase 6: Compose-Specific (AP031-AP034)
-    BusinessLogicInComposableDetector, LaunchedEffectWithoutKeyDetector,
-    NavControllerPassingDetector, StateWithoutRememberDetector,
+    BusinessLogicInComposableDetector,
+    // Phase 2: Performance & Memory (AP011-AP015)
+    CollectionWithoutSequenceDetector,
+    // Phase 4: Kotlin-Specific (AP021-AP025)
+    ComplexConditionDetector,
+    // Anti-pattern detectors (AP001-AP006)
+    DeepInheritanceDetector,
+    // Core detectors
+    Detector,
+    EventBusPatternDetector,
+    GlobalMutableStateDetector,
+    // Phase 1: Kotlin patterns (AP007-AP010)
+    GlobalScopeUsageDetector,
+    // Phase 3: Architecture & Design (AP016-AP020)
+    HardcodedDispatcherDetector,
+    HeavyViewModelDetector,
+    InitOnDrawDetector,
+    LargeClassDetector,
+    LateinitAbuseDetector,
+    LaunchedEffectWithoutKeyDetector,
+    LongMethodDetector,
+    LongParameterListDetector,
+    MainThreadDatabaseDetector,
+    MemoryLeakRiskDetector,
+    MissingUseCaseDetector,
+    MutableStateExposedDetector,
+    NavControllerPassingDetector,
+    NestedCallbackDetector,
+    NullabilityOverloadDetector,
+    ObjectAllocationInLoopDetector,
+    RedundantOverrideDetector,
+    ReflectionOveruseDetector,
+    ScopeFunctionChainingDetector,
+    SingleImplInterfaceDetector,
+    StateWithoutRememberDetector,
+    StringLiteralDuplicationDetector,
+    UnclosedResourceDetector,
+    UnusedIntentExtraDetector,
+    UnusedParamDetector,
+    UnusedSealedVariantDetector,
+    ViewLogicInViewModelDetector,
+    WakeLockAbuseDetector,
+    WriteOnlyDetector,
 };
 use analysis::{
     Confidence, CycleDetector, DeepAnalyzer, EnhancedAnalyzer, EntryPointDetector, HybridAnalyzer,
@@ -317,7 +339,9 @@ fn determine_report_format(cli: &Cli) -> report::ReportFormat {
     }
 
     if let Some(group_by) = &cli.group_by {
-        let mode = group_by.parse::<report::GroupBy>().unwrap_or(report::GroupBy::Rule);
+        let mode = group_by
+            .parse::<report::GroupBy>()
+            .unwrap_or(report::GroupBy::Rule);
         return report::ReportFormat::Grouped(mode);
     }
 
@@ -894,27 +918,7 @@ fn run_analysis(config: &Config, cli: &Cli) -> Result<()> {
                     .sum::<usize>(),
                 resource_analysis.referenced.len()
             );
-            // Print unused resources directly (they're not part of the code graph)
-            if !cli.quiet {
-                use colored::Colorize;
-                println!();
-                println!("{}", "📦 Unused Android Resources:".yellow().bold());
-                for resource in &resource_analysis.unused {
-                    let rel_path = resource
-                        .file
-                        .strip_prefix(&cli.path)
-                        .unwrap_or(&resource.file);
-                    println!(
-                        "  {} {}:{} - {} '{}'",
-                        "○".dimmed(),
-                        rel_path.display(),
-                        resource.line,
-                        resource.resource_type,
-                        resource.name
-                    );
-                }
-                println!();
-            }
+            dead_code.extend(resource_analysis.unused);
         }
     }
 
@@ -1297,6 +1301,10 @@ fn run_analysis(config: &Config, cli: &Cli) -> Result<()> {
         let deleter =
             refactor::SafeDeleter::new(cli.interactive, cli.dry_run, cli.undo_script.clone());
         deleter.delete(&dead_code)?;
+    }
+
+    if !dead_code.is_empty() {
+        std::process::exit(1);
     }
 
     Ok(())

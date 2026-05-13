@@ -101,6 +101,10 @@ path = "tests/integration/false_positive_tests.rs"
 name = "advanced"
 path = "tests/integration/advanced_tests.rs"
 
+[[test]]
+name = "resource_tests"
+path = "tests/integration/resource_tests.rs"
+
 [profile.release]
 lto = true
 codegen-units = 1
