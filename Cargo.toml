@@ -17,7 +17,7 @@ categories = ["command-line-utilities", "development-tools"]
 [dependencies]
 # Parsing
 tree-sitter = "0.22"
-tree-sitter-kotlin = "0.3.6"
+tree-sitter-kotlin = "0.3.8"
 tree-sitter-java = "0.21"
 
 # Graph
@@ -25,29 +25,29 @@ petgraph = "0.8"
 
 # File discovery
 ignore = "0.4"
-walkdir = "2.4"
+walkdir = "2.5"
 
 # Parallelism
-rayon = "1.8"
+rayon = "1.12"
 
 # CLI
-clap = { version = "4.4", features = ["derive"] }
-clap_complete = "4.4"
+clap = { version = "4.6", features = ["derive"] }
+clap_complete = "4.6"
 
 # Config
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_yaml = "0.9"
-toml = "0.9"
+toml = "1.1"
 
 # XML parsing
-quick-xml = "0.38"
+quick-xml = "0.40"
 
 # Regex for resource detection
-regex = "1.10"
+regex = "1.12"
 
 # Terminal UI
-colored = "3.0"
+colored = "3.1"
 indicatif = "0.18"
 console = "0.16"
 
@@ -60,7 +60,7 @@ anyhow = "1.0"
 dialoguer = "0.12"
 
 # File watching
-notify = "8.0"
+notify = "8.2"
 notify-debouncer-mini = "0.7"
 
 # Logging
@@ -68,9 +68,9 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 [dev-dependencies]
-tempfile = "3.9"
-assert_cmd = "2.0"
-predicates = "3.0"
+tempfile = "3.27"
+assert_cmd = "2.2"
+predicates = "3.1"
 criterion = "0.8"
 
 [[bench]]
