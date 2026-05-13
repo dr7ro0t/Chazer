@@ -26,7 +26,7 @@ pub enum BaselineError {
 const BASELINE_VERSION: u32 = 1;
 
 /// A fingerprint for a dead code issue that can be matched across runs
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, PartialOrd, Ord)]
 pub struct IssueFingerprint {
     /// Relative file path
     pub file: String,
@@ -109,10 +109,13 @@ pub struct Baseline {
 impl Baseline {
     /// Create a new baseline from dead code findings
     pub fn from_findings(findings: &[DeadCode], project_root: &Path) -> Self {
-        let issues: Vec<IssueFingerprint> = findings
+        let mut issues: Vec<IssueFingerprint> = findings
             .iter()
             .map(|dc| IssueFingerprint::from_dead_code(dc, project_root))
             .collect();
+
+        // Sort issues for deterministic output
+        issues.sort();
 
         Self {
             version: BASELINE_VERSION,
@@ -292,5 +295,35 @@ mod tests {
         let new_findings = baseline.filter_new(&findings, &project_root);
         assert_eq!(new_findings.len(), 1);
         assert_eq!(new_findings[0].declaration.name, "ClassB");
+    }
+
+    #[test]
+    fn test_baseline_sorting() {
+        let project_root = PathBuf::from("/project");
+
+        // Findings in one order
+        let findings_a = vec![
+            make_dead_code("ZClass", "/project/src/z.kt", 100),
+            make_dead_code("AClass", "/project/src/a.kt", 10),
+            make_dead_code("MClass", "/project/src/m.kt", 50),
+        ];
+
+        // Findings in another order
+        let findings_b = vec![
+            make_dead_code("AClass", "/project/src/a.kt", 10),
+            make_dead_code("MClass", "/project/src/m.kt", 50),
+            make_dead_code("ZClass", "/project/src/z.kt", 100),
+        ];
+
+        let baseline_a = Baseline::from_findings(&findings_a, &project_root);
+        let baseline_b = Baseline::from_findings(&findings_b, &project_root);
+
+        // Issues should be in the same order (sorted) regardless of input order
+        assert_eq!(baseline_a.issues, baseline_b.issues);
+
+        // Specifically check that they are sorted by file path
+        assert_eq!(baseline_a.issues[0].file, "src/a.kt");
+        assert_eq!(baseline_a.issues[1].file, "src/m.kt");
+        assert_eq!(baseline_a.issues[2].file, "src/z.kt");
     }
 }
