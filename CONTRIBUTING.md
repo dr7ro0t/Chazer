@@ -13,7 +13,7 @@ Thank you for your interest in contributing to SearchDeadCode! This document pro
 
 ```bash
 # Clone the repository
-git clone https://github.com/KevinDoremy/SearchDeadCode.git
+git clone https://github.com/dr7ro0t/SearchDeadCode.git
 cd SearchDeadCode
 
 # Build the project
@@ -30,7 +30,7 @@ cargo run -- /path/to/android/project
 
 ### Reporting Bugs
 
-1. Check if the issue already exists in [GitHub Issues](https://github.com/KevinDoremy/SearchDeadCode/issues)
+1. Check if the issue already exists in [GitHub Issues](https://github.com/dr7ro0t/SearchDeadCode/issues)
 2. If not, create a new issue using the bug report template
 3. Include:
    - Steps to reproduce
@@ -40,7 +40,7 @@ cargo run -- /path/to/android/project
 
 ### Suggesting Features
 
-1. Open a [GitHub Issue](https://github.com/KevinDoremy/SearchDeadCode/issues/new)
+1. Open a [GitHub Issue](https://github.com/dr7ro0t/SearchDeadCode/issues/new)
 2. Describe the feature and its use case
 3. Explain why it would benefit the project
 

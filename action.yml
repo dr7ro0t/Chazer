@@ -1,5 +1,5 @@
 name: 'SearchDeadCode'
-author: 'Kevin Doremy'
+author: 'DryRoot'
 description: 'Detect dead/unused code in Android projects (Kotlin & Java). Fast static analysis powered by tree-sitter.'
 
 branding:
@@ -92,7 +92,7 @@ runs:
       run: |
         VERSION="${{ inputs.version }}"
         if [ "$VERSION" = "latest" ]; then
-          VERSION=$(gh api repos/KevinDoremy/SearchDeadCode/releases/latest --jq '.tag_name' 2>/dev/null | sed 's/^v//' || echo "0.4.0")
+          VERSION=$(gh api repos/dr7ro0t/SearchDeadCode/releases/latest --jq '.tag_name' 2>/dev/null | sed 's/^v//' || echo "0.4.0")
         fi
         echo "version=$VERSION" >> $GITHUB_OUTPUT
 
@@ -119,7 +119,7 @@ runs:
           BINARY_NAME="searchdeadcode-${TARGET}"
         fi
 
-        DOWNLOAD_URL="https://github.com/KevinDoremy/SearchDeadCode/releases/download/v${VERSION}/${BINARY_NAME}"
+        DOWNLOAD_URL="https://github.com/dr7ro0t/SearchDeadCode/releases/download/v${VERSION}/${BINARY_NAME}"
 
         echo "Downloading SearchDeadCode v${VERSION} for ${TARGET}..."
         echo "URL: ${DOWNLOAD_URL}"

@@ -34,7 +34,7 @@ echo -e "${YELLOW}Running SearchDeadCode...${NC}"
 # Check if searchdeadcode is installed
 if ! command -v searchdeadcode &> /dev/null; then
     echo -e "${RED}Error: searchdeadcode is not installed${NC}"
-    echo "Install it with: brew tap KevinDoremy/tap && brew install searchdeadcode"
+    echo "Install it with: brew tap dr7ro0t/tap && brew install searchdeadcode"
     echo "Or: cargo install searchdeadcode"
     exit 1
 fi
