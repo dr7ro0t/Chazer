@@ -181,7 +181,7 @@ runs:
         if [ "$FORMAT" = "json" ] && [ -n "${{ inputs.output }}" ]; then
           FINDINGS=$(jq 'length' "${{ inputs.output }}" 2>/dev/null || echo "0")
         else
-          FINDINGS=$(echo "$OUTPUT_TEXT" | grep -oE 'Found [0-9]+ dead code' | grep -oE '[0-9]+' || echo "0")
+          FINDINGS=$(echo "$OUTPUT_TEXT" | grep -oE 'Found [0-9]+ dead code' | head -1 | grep -oE '[0-9]+' || echo "0")
         fi
 
         echo "findings_count=$FINDINGS" >> $GITHUB_OUTPUT
@@ -190,6 +190,12 @@ runs:
         if [ "${{ inputs.fail-on-findings }}" = "true" ] && [ "$FINDINGS" -gt 0 ]; then
           echo "::error::Found $FINDINGS dead code issue(s)"
           exit 1
+        fi
+
+        # Exit with original code if not failing on findings
+        # Chazer returns 1 if issues are found, which would normally fail the step
+        if [ "$EXIT_CODE" -ne 0 ] && [ "$FINDINGS" -eq 0 ]; then
+          exit "$EXIT_CODE"
         fi
 
         exit 0
