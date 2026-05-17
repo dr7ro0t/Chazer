@@ -194,18 +194,19 @@ impl WriteOnlyDaoDetector {
             }
 
             // If we have a pending annotation, look for the method
-            if let Some((annotation, ann_line)) = pending_annotation.take() {
-                if let Some(method_name) = self.extract_method_name(trimmed) {
-                    if let Some(ref mut dao) = current_dao {
-                        let entity_type = self.extract_entity_type(trimmed);
-                        dao.methods.push(DaoMethod {
-                            name: method_name,
-                            annotation,
-                            entity_type,
-                            line: ann_line,
-                        });
+            if let Some((annotation, ann_line)) = pending_annotation.take()
+                && let Some(method_name) = self.extract_method_name(trimmed)
+                && let Some(ref mut dao) = current_dao
+            {
+                let entity_type = self.extract_entity_type(trimmed);
+                dao.methods.push(
+                    DaoMethod {
+                        name: method_name,
+                        annotation,
+                        entity_type,
+                        line: ann_line,
                     }
-                }
+                );
             }
         }
 
@@ -274,14 +275,14 @@ impl WriteOnlyDaoDetector {
         }
 
         // Match: abstract fun methodName(
-        if trimmed.contains("abstract") {
-            if let Some(idx) = trimmed.find("fun ") {
-                let after = &trimmed[idx + 4..];
-                let name_end = after.find('(').unwrap_or(after.len());
-                let name = after[..name_end].trim();
-                if !name.is_empty() {
-                    return Some(name.to_string());
-                }
+        if trimmed.contains("abstract")
+            && let Some(idx) = trimmed.find("fun ")
+        {
+            let after = &trimmed[idx + 4..];
+            let name_end = after.find('(').unwrap_or(after.len());
+            let name = after[..name_end].trim();
+            if !name.is_empty() {
+                return Some(name.to_string());
             }
         }
 
@@ -291,26 +292,26 @@ impl WriteOnlyDaoDetector {
     /// Extract the entity type from a method signature
     fn extract_entity_type(&self, line: &str) -> Option<String> {
         // Look for patterns like: (user: User) or (entity: SomeEntity)
-        if let Some(start) = line.find('(') {
-            if let Some(end) = line.find(')') {
-                let params = &line[start + 1..end];
-                // Simple heuristic: last word before ) that starts with uppercase
-                for part in params.split(',') {
-                    if let Some(colon_idx) = part.find(':') {
-                        let type_part = part[colon_idx + 1..].trim();
-                        let type_name = type_part
-                            .split(|c: char| !c.is_alphanumeric() && c != '_')
+        if let Some(start) = line.find('(')
+            && let Some(end) = line.find(')')
+        {
+            let params = &line[start + 1..end];
+            // Simple heuristic: last word before ) that starts with uppercase
+            for part in params.split(',') {
+                if let Some(colon_idx) = part.find(':') {
+                    let type_part = part[colon_idx + 1..].trim();
+                    let type_name = type_part
+                        .split(|c: char| !c.is_alphanumeric() && c != '_')
+                        .next()
+                        .unwrap_or("");
+                    if !type_name.is_empty()
+                        && type_name
+                            .chars()
                             .next()
-                            .unwrap_or("");
-                        if !type_name.is_empty()
-                            && type_name
-                                .chars()
-                                .next()
-                                .map(|c| c.is_uppercase())
-                                .unwrap_or(false)
-                        {
-                            return Some(type_name.to_string());
-                        }
+                            .map(|c| c.is_uppercase())
+                            .unwrap_or(false)
+                    {
+                        return Some(type_name.to_string());
                     }
                 }
             }

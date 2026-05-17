@@ -180,10 +180,10 @@ impl ParallelGraphBuilder {
 
     fn resolve_reference(&self, graph: &Graph, unresolved: &UnresolvedRef) -> Vec<DeclarationId> {
         // Try fully qualified name first
-        if let Some(fqn) = &unresolved.qualified_name {
-            if let Some(decl) = graph.find_by_fqn(fqn) {
-                return vec![decl.id.clone()];
-            }
+        if let Some(fqn) = &unresolved.qualified_name
+            && let Some(decl) = graph.find_by_fqn(fqn)
+        {
+            return vec![decl.id.clone()];
         }
 
         // Try imports

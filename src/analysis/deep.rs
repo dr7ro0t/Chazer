@@ -167,14 +167,14 @@ impl DeepAnalyzer {
                     // Follow edges from this member
                     if let Some(member_idx) = graph.node_index(&decl.id) {
                         for neighbor in inner_graph.neighbors(member_idx) {
-                            if let Some(neighbor_id) = inner_graph.node_weight(neighbor) {
-                                if !reachable.contains(neighbor_id) {
-                                    // DFS from this newly discovered node
-                                    let mut dfs = Dfs::new(inner_graph, neighbor);
-                                    while let Some(node_idx) = dfs.next(inner_graph) {
-                                        if let Some(node_id) = inner_graph.node_weight(node_idx) {
-                                            reachable.insert(node_id.clone());
-                                        }
+                            if let Some(neighbor_id) = inner_graph.node_weight(neighbor)
+                                && !reachable.contains(neighbor_id)
+                            {
+                                // DFS from this newly discovered node
+                                let mut dfs = Dfs::new(inner_graph, neighbor);
+                                while let Some(node_idx) = dfs.next(inner_graph) {
+                                    if let Some(node_id) = inner_graph.node_weight(node_idx) {
+                                        reachable.insert(node_id.clone());
                                     }
                                 }
                             }
@@ -406,12 +406,11 @@ impl DeepAnalyzer {
         id: &DeclarationId,
         ancestors: &mut HashSet<DeclarationId>,
     ) {
-        if let Some(decl) = graph.get_declaration(id) {
-            if let Some(parent_id) = &decl.parent {
-                if ancestors.insert(parent_id.clone()) {
-                    Self::collect_ancestors(graph, parent_id, ancestors);
-                }
-            }
+        if let Some(decl) = graph.get_declaration(id)
+            && let Some(parent_id) = &decl.parent
+            && ancestors.insert(parent_id.clone())
+        {
+            Self::collect_ancestors(graph, parent_id, ancestors);
         }
     }
 
@@ -527,17 +526,27 @@ impl DeepAnalyzer {
             }
 
             // Skip declarations with @VisibleForTesting
-            if decl.annotations.iter().any(|a| a.contains("VisibleForTesting")) {
+            if decl
+                .annotations
+                .iter()
+                .any(|a| a.contains("VisibleForTesting"))
+            {
                 continue;
             }
 
             // Skip test methods and test rules (called by test framework)
             let is_test = decl.annotations.iter().any(|a| {
-                a.contains("Test") || a.contains("Before") || a.contains("After")
-                || a.contains("BeforeEach") || a.contains("AfterEach")
-                || a.contains("BeforeAll") || a.contains("AfterAll")
-                || a.contains("ParameterizedTest") || a.contains("RepeatedTest")
-                || a.contains("Rule") || a.contains("ClassRule")
+                a.contains("Test")
+                    || a.contains("Before")
+                    || a.contains("After")
+                    || a.contains("BeforeEach")
+                    || a.contains("AfterEach")
+                    || a.contains("BeforeAll")
+                    || a.contains("AfterAll")
+                    || a.contains("ParameterizedTest")
+                    || a.contains("RepeatedTest")
+                    || a.contains("Rule")
+                    || a.contains("ClassRule")
             });
             if is_test {
                 continue;
@@ -559,10 +568,10 @@ impl DeepAnalyzer {
             }
 
             // Check for write-only properties
-            if decl.kind == DeclarationKind::Property {
-                if let Some(issue) = self.detect_write_only_property(decl, graph) {
-                    unused.push(issue);
-                }
+            if decl.kind == DeclarationKind::Property
+                && let Some(issue) = self.detect_write_only_property(decl, graph)
+            {
+                unused.push(issue);
             }
         }
 
@@ -767,23 +776,20 @@ impl DeepAnalyzer {
         }
 
         // Skip members of unreachable classes (report class instead)
-        if let Some(parent_id) = &decl.parent {
-            if !reachable.contains(parent_id) {
-                if let Some(parent) = graph.get_declaration(parent_id) {
-                    if parent.kind.is_type() {
-                        return true;
-                    }
-                }
-            }
+        if let Some(parent_id) = &decl.parent
+            && !reachable.contains(parent_id)
+            && let Some(parent) = graph.get_declaration(parent_id)
+            && parent.kind.is_type()
+        {
+            return true;
         }
 
         // Skip constructors of unreachable classes
-        if decl.kind == DeclarationKind::Constructor {
-            if let Some(parent_id) = &decl.parent {
-                if !reachable.contains(parent_id) {
-                    return true;
-                }
-            }
+        if decl.kind == DeclarationKind::Constructor
+            && let Some(parent_id) = &decl.parent
+            && !reachable.contains(parent_id)
+        {
+            return true;
         }
 
         // Skip Kotlin const val properties (they are inlined at compile time)
@@ -807,25 +813,36 @@ impl DeepAnalyzer {
 
         // Skip declarations with @Suppress("unused") or @Suppress("UnusedPrivateMember")
         // Developer explicitly acknowledges the code is unused but wants to keep it
-        if decl.annotations.iter().any(|a| {
-            a.contains("Suppress")
-                && (a.contains("unused") || a.contains("UnusedPrivateMember"))
-        }) {
+        if decl
+            .annotations
+            .iter()
+            .any(|a| { a.contains("Suppress") && (a.contains("unused") || a.contains("UnusedPrivateMember")) })
+        {
             return true;
         }
 
         // Skip declarations with @VisibleForTesting - they are public only for testing
-        if decl.annotations.iter().any(|a| a.contains("VisibleForTesting")) {
+        if decl
+            .annotations
+            .iter()
+            .any(|a| a.contains("VisibleForTesting"))
+        {
             return true;
         }
 
         // Skip test methods and test rules (called by test framework)
         if decl.annotations.iter().any(|a| {
-            a.contains("Test") || a.contains("Before") || a.contains("After")
-            || a.contains("BeforeEach") || a.contains("AfterEach")
-            || a.contains("BeforeAll") || a.contains("AfterAll")
-            || a.contains("ParameterizedTest") || a.contains("RepeatedTest")
-            || a.contains("Rule") || a.contains("ClassRule")
+            a.contains("Test")
+                || a.contains("Before")
+                || a.contains("After")
+                || a.contains("BeforeEach")
+                || a.contains("AfterEach")
+                || a.contains("BeforeAll")
+                || a.contains("AfterAll")
+                || a.contains("ParameterizedTest")
+                || a.contains("RepeatedTest")
+                || a.contains("Rule")
+                || a.contains("ClassRule")
         }) {
             return true;
         }
@@ -884,19 +901,18 @@ impl DeepAnalyzer {
         }
 
         // Check if parent is a data class
-        if let Some(parent_id) = &decl.parent {
-            if let Some(parent) = graph.get_declaration(parent_id) {
-                if self.is_data_class(parent) {
-                    // Check for auto-generated method names
-                    let generated_methods = ["copy", "equals", "hashCode", "toString"];
-                    if generated_methods.contains(&decl.name.as_str()) {
-                        return true;
-                    }
-                    // componentN methods (component1, component2, etc.)
-                    if decl.name.starts_with("component") && decl.name[9..].parse::<u32>().is_ok() {
-                        return true;
-                    }
-                }
+        if let Some(parent_id) = &decl.parent
+            && let Some(parent) = graph.get_declaration(parent_id)
+            && self.is_data_class(parent)
+        {
+            // Check for auto-generated method names
+            let generated_methods = ["copy", "equals", "hashCode", "toString"];
+            if generated_methods.contains(&decl.name.as_str()) {
+                return true;
+            }
+            // componentN methods (component1, component2, etc.)
+            if decl.name.starts_with("component") && decl.name[9..].parse::<u32>().is_ok() {
+                return true;
             }
         }
 

@@ -410,15 +410,15 @@ impl<'a> EntryPointDetector<'a> {
             // Find the method as a child of this class
             let children = graph.get_children(&class.id);
             for &child in &children {
-                if let Some(child_decl) = graph.get_declaration(child) {
-                    if child_decl.name == method_name {
-                        debug!(
-                            "Data binding entry point: {}.{} (method)",
-                            class.name, method_name
-                        );
-                        entry_points.insert(child.clone());
-                        return;
-                    }
+                if let Some(child_decl) = graph.get_declaration(child)
+                    && child_decl.name == method_name
+                {
+                    debug!(
+                        "Data binding entry point: {}.{} (method)",
+                        class.name, method_name
+                    );
+                    entry_points.insert(child.clone());
+                    return;
                 }
             }
 
@@ -426,15 +426,15 @@ impl<'a> EntryPointDetector<'a> {
             let method_candidates = graph.find_by_name(method_name);
             for candidate in method_candidates {
                 // Check if this method's parent matches the class
-                if let Some(parent_id) = &candidate.parent {
-                    if parent_id == &class.id {
-                        debug!(
-                            "Data binding entry point: {}.{} (by parent)",
-                            class.name, method_name
-                        );
-                        entry_points.insert(candidate.id.clone());
-                        return;
-                    }
+                if let Some(parent_id) = &candidate.parent
+                    && parent_id == &class.id
+                {
+                    debug!(
+                        "Data binding entry point: {}.{} (by parent)",
+                        class.name, method_name
+                    );
+                    entry_points.insert(candidate.id.clone());
+                    return;
                 }
             }
 

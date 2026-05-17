@@ -3,8 +3,8 @@
 //! This module detects unused Android resources like strings, colors, dimensions,
 //! drawables, etc. by cross-referencing resource definitions with code references.
 
-use quick_xml::events::Event;
 use quick_xml::Reader;
+use quick_xml::events::Event;
 use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -146,13 +146,14 @@ impl ResourceDetector {
 
         for subdir in subdirs {
             let values_dir = res_dir.join(subdir);
-            if values_dir.exists() && values_dir.is_dir() {
-                if let Ok(entries) = fs::read_dir(&values_dir) {
-                    for entry in entries.flatten() {
-                        let path = entry.path();
-                        if path.extension().map(|e| e == "xml").unwrap_or(false) {
-                            self.parse_values_xml(&path, analysis);
-                        }
+            if values_dir.exists()
+                && values_dir.is_dir()
+                && let Ok(entries) = fs::read_dir(&values_dir)
+            {
+                for entry in entries.flatten() {
+                    let path = entry.path();
+                    if path.extension().map(|e| e == "xml").unwrap_or(false) {
+                        self.parse_values_xml(&path, analysis);
                     }
                 }
             }
@@ -410,8 +411,9 @@ mod tests {
         assert_eq!(dead.issue, DeadCodeIssue::UnusedResource);
         assert_eq!(dead.declaration.kind, DeclarationKind::Resource);
         assert_eq!(dead.declaration.language, Language::Xml);
-        assert!(dead
-            .message
-            .contains("Unused Android string: 'unused_string'"));
+        assert!(
+            dead.message
+                .contains("Unused Android string: 'unused_string'")
+        );
     }
 }

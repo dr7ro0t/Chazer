@@ -161,8 +161,8 @@ impl GraphBuilder {
                 // incorrectly creates references between them. This is especially problematic
                 // for write-only detection where properties in different classes should be
                 // analyzed independently.
-                if let Some(from_decl) = self.graph.get_declaration(&unresolved.from) {
-                    if let Some(to_decl) = self.graph.get_declaration(&to_id) {
+                if let Some(from_decl) = self.graph.get_declaration(&unresolved.from)
+                    && let Some(to_decl) = self.graph.get_declaration(&to_id) {
                         // Skip if: same name AND from different files AND target is a property/field
                         if from_decl.name == to_decl.name
                             && from_decl.location.file != to_decl.location.file
@@ -174,7 +174,6 @@ impl GraphBuilder {
                             continue;
                         }
                     }
-                }
 
                 let reference = Reference::new(
                     unresolved.kind,
@@ -196,11 +195,10 @@ impl GraphBuilder {
     /// Try to resolve a reference to declarations (may return multiple for overloaded functions)
     fn resolve_reference(&self, unresolved: &UnresolvedRef) -> Vec<DeclarationId> {
         // Try fully qualified name first
-        if let Some(fqn) = &unresolved.qualified_name {
-            if let Some(decl) = self.graph.find_by_fqn(fqn) {
+        if let Some(fqn) = &unresolved.qualified_name
+            && let Some(decl) = self.graph.find_by_fqn(fqn) {
                 return vec![decl.id.clone()];
             }
-        }
 
         // Try to resolve using imports
         for import in &unresolved.imports {

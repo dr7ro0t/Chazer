@@ -74,25 +74,27 @@ impl ProguardUsage {
             // Lines starting with whitespace are members of the current class
             if line.starts_with(' ') || line.starts_with('\t') {
                 let member_line = line.trim();
-                if let Some(ref class_name) = current_class {
-                    if let Some(entry) = Self::parse_member_line(class_name, member_line) {
-                        usage.add_entry(entry);
-                        class_has_members = true;
-                    }
+                if let Some(ref class_name) = current_class
+                    && let Some(entry) = Self::parse_member_line(class_name, member_line)
+                {
+                    usage.add_entry(entry);
+                    class_has_members = true;
                 }
             } else {
                 // Before moving to next class, check if previous class had no members
                 // (meaning the entire class is unused)
-                if let Some(ref class_name) = current_class {
-                    if !class_has_members {
-                        usage.dead_classes.insert(class_name.clone());
-                        usage.add_entry(UsageEntry {
+                if let Some(ref class_name) = current_class
+                    && !class_has_members
+                {
+                    usage.dead_classes.insert(class_name.clone());
+                    usage.add_entry(
+                        UsageEntry {
                             class_name: class_name.clone(),
                             member_name: None,
                             kind: UsageEntryKind::Class,
                             signature: None,
-                        });
-                    }
+                        }
+                    );
                 }
 
                 // This is a class declaration
@@ -102,16 +104,18 @@ impl ProguardUsage {
         }
 
         // Handle last class
-        if let Some(ref class_name) = current_class {
-            if !class_has_members {
-                usage.dead_classes.insert(class_name.clone());
-                usage.add_entry(UsageEntry {
+        if let Some(ref class_name) = current_class
+            && !class_has_members
+        {
+            usage.dead_classes.insert(class_name.clone());
+            usage.add_entry(
+                UsageEntry {
                     class_name: class_name.clone(),
                     member_name: None,
                     kind: UsageEntryKind::Class,
                     signature: None,
-                });
-            }
+                }
+            );
         }
 
         Ok(usage)
@@ -269,15 +273,15 @@ impl ProguardUsage {
 
         // Check by simple name matching (less confident)
         for entry in self.all_entries() {
-            if let Some(ref name) = entry.member_name {
-                if name == member_name {
-                    return Some(0.8); // Name matches but might be different class
-                }
+            if let Some(ref name) = entry.member_name
+                && name == member_name
+            {
+                return Some(0.8); // Name matches but might be different class
             }
-            if let Some(simple) = entry.class_name.split('.').next_back() {
-                if simple == member_name {
-                    return Some(0.8);
-                }
+            if let Some(simple) = entry.class_name.split('.').next_back()
+                && simple == member_name
+            {
+                return Some(0.8);
             }
         }
 

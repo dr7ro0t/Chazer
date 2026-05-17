@@ -1,12 +1,13 @@
 // Kotlin parser - some internal methods reserved for future use
 #![allow(dead_code)]
 
-use super::common::{node_text, point_to_location, ParseResult, Parser};
+use super::common::{ParseResult, Parser, node_text, point_to_location};
 use crate::graph::{
     Declaration, DeclarationId, DeclarationKind, Language, Location, ReferenceKind,
     UnresolvedReference, Visibility,
 };
 use miette::{IntoDiagnostic, Result};
+use regex::Regex;
 use std::path::Path;
 use tracing::debug;
 use tree_sitter::{Node, Parser as TsParser};
@@ -854,16 +855,17 @@ impl KotlinParser {
     ) -> Result<()> {
         let mut cursor = node.walk();
         for child in node.children(&mut cursor) {
-            if child.kind() == "parameter" || child.kind() == "class_parameter" {
-                if let Some(name_node) = child.child_by_field_name("simple_identifier") {
-                    let name = node_text(name_node, source).to_string();
-                    let location = point_to_location(
-                        path,
-                        child.start_position(),
-                        child.end_position(),
-                        child.start_byte(),
-                        child.end_byte(),
-                    );
+            if (child.kind() == "parameter" || child.kind() == "class_parameter")
+                && let Some(name_node) = child.child_by_field_name("simple_identifier")
+            {
+                let name = node_text(name_node, source).to_string();
+                let location = point_to_location(
+                    path,
+                    child.start_position(),
+                    child.end_position(),
+                    child.start_byte(),
+                    child.end_byte(),
+                );
 
                     let id = DeclarationId::new(
                         path.to_path_buf(),
@@ -871,18 +873,17 @@ impl KotlinParser {
                         child.end_byte(),
                     );
 
-                    let mut decl = Declaration::new(
-                        id,
-                        name,
-                        DeclarationKind::Parameter,
-                        location,
-                        Language::Kotlin,
-                    );
+                let mut decl = Declaration::new(
+                    id,
+                    name,
+                    DeclarationKind::Parameter,
+                    location,
+                    Language::Kotlin,
+                );
 
-                    decl.parent = Some(parent.clone());
+                decl.parent = Some(parent.clone());
 
-                    result.declarations.push(decl);
-                }
+                result.declarations.push(decl);
             }
         }
 
@@ -1036,10 +1037,12 @@ impl KotlinParser {
 
         let mut cursor = node.walk();
 
+        // Compile regex outside the loop to avoid clippy::regex-creation-in-loops
+        let func_call_re = Regex::new(r"([a-z][a-zA-Z0-9]*)\s*\(\s*\)").ok();
+
         // Walk through all nodes looking for identifiers
         loop {
             let current = cursor.node();
-
 
             match current.kind() {
                 "simple_identifier" => {
@@ -1215,7 +1218,8 @@ impl KotlinParser {
                                 let mut err_cursor = child.walk();
                                 for err_child in child.children(&mut err_cursor) {
                                     if err_child.kind() == "simple_identifier" {
-                                        error_identifier = Some(node_text(err_child, source).to_string());
+                                        error_identifier =
+                                            Some(node_text(err_child, source).to_string());
                                         error_location = Some((
                                             err_child.start_position().row,
                                             err_child.start_position().column,
@@ -1234,9 +1238,11 @@ impl KotlinParser {
                     }
 
                     // If we detected the bug pattern, extract the function call
-                    if has_not_is && error_identifier.is_some() && has_function_type {
+                    if has_not_is
+                        && has_function_type
+                        && let Some(ident) = error_identifier
+                    {
                         // Reconstruct the function name: "is" + error_identifier
-                        let ident = error_identifier.unwrap();
                         let func_name = format!("is{}", ident);
                         let (row, col, start, end) = error_location.unwrap();
 
@@ -1260,14 +1266,16 @@ impl KotlinParser {
                     // Also scan the entire type_test text for additional misparsed function calls
                     // Since the parse error can cascade and absorb multiple when entries
                     let type_test_text = node_text(current, source);
-                    let re_pattern = regex::Regex::new(r"([a-z][a-zA-Z0-9]*)\s*\(\s*\)").ok();
-                    if let Some(re) = re_pattern {
+                    if let Some(re) = &func_call_re {
                         for cap in re.captures_iter(type_test_text) {
                             if let Some(m) = cap.get(1) {
                                 let func_name = m.as_str().to_string();
                                 // Skip keywords and already-handled isXxx patterns
-                                if func_name != "if" && func_name != "when" && func_name != "for"
-                                    && !func_name.starts_with("is") {
+                                if func_name != "if"
+                                    && func_name != "when"
+                                    && func_name != "for"
+                                    && !func_name.starts_with("is")
+                                {
                                     let offset = current.start_byte() + m.start();
                                     let end = current.start_byte() + m.end();
 
@@ -1298,13 +1306,15 @@ impl KotlinParser {
                     let entry_text = node_text(current, source);
                     if entry_text.matches("->").count() > 1 {
                         // This entry likely contains absorbed misparsed entries
-                        let re_pattern = regex::Regex::new(r"([a-z][a-zA-Z0-9]*)\s*\(\s*\)").ok();
-                        if let Some(re) = re_pattern {
+                        if let Some(re) = &func_call_re {
                             for cap in re.captures_iter(entry_text) {
                                 if let Some(m) = cap.get(1) {
                                     let func_name = m.as_str().to_string();
                                     // Skip keywords
-                                    if func_name != "if" && func_name != "when" && func_name != "for" {
+                                    if func_name != "if"
+                                        && func_name != "when"
+                                        && func_name != "for"
+                                    {
                                         let offset = current.start_byte() + m.start();
                                         let end = current.start_byte() + m.end();
 
@@ -1339,8 +1349,7 @@ impl KotlinParser {
 
                     // Look for patterns like "identifier()" in the error text
                     // These are likely misparsed function calls
-                    let re_pattern = regex::Regex::new(r"([a-z][a-zA-Z0-9]*)\s*\(\s*\)").ok();
-                    if let Some(re) = re_pattern {
+                    if let Some(re) = &func_call_re {
                         for cap in re.captures_iter(error_text) {
                             if let Some(m) = cap.get(1) {
                                 let func_name = m.as_str().to_string();
@@ -1472,10 +1481,9 @@ impl KotlinParser {
                 if let Some(name) = after_keyword
                     .split(|c: char| !c.is_alphanumeric() && c != '_')
                     .next()
+                    && !name.is_empty()
                 {
-                    if !name.is_empty() {
-                        return Ok(name.to_string());
-                    }
+                    return Ok(name.to_string());
                 }
             }
         }
@@ -1687,24 +1695,25 @@ impl KotlinParser {
                         if let Some(delegate_name) = delegate_expr
                             .split(|c: char| !c.is_alphanumeric() && c != '_')
                             .next()
+                            && !delegate_name.is_empty()
                         {
-                            if !delegate_name.is_empty() {
-                                let location = point_to_location(
-                                    path,
-                                    child.start_position(),
-                                    child.end_position(),
-                                    child.start_byte(),
-                                    child.end_byte(),
-                                );
+                            let location = point_to_location(
+                                path,
+                                child.start_position(),
+                                child.end_position(),
+                                child.start_byte(),
+                                child.end_byte(),
+                            );
 
-                                result.references.push(UnresolvedReference {
+                            result.references.push(
+                                UnresolvedReference {
                                     name: delegate_name.to_string(),
                                     qualified_name: None,
                                     kind: ReferenceKind::Delegation,
                                     location,
                                     imports: imports.to_vec(),
-                                });
-                            }
+                                }
+                            );
                         }
                     }
                 }
@@ -1729,13 +1738,13 @@ impl KotlinParser {
 
         // Also check for annotations in preceding prefix_expression siblings
         // (tree-sitter-kotlin sometimes places annotations there instead of in modifiers)
-        if let Some(prev) = node.prev_sibling() {
-            if prev.kind() == "prefix_expression" {
-                let mut prefix_cursor = prev.walk();
-                for child in prev.children(&mut prefix_cursor) {
-                    if child.kind() == "annotation" {
-                        annotations.push(node_text(child, source).to_string());
-                    }
+        if let Some(prev) = node.prev_sibling()
+            && prev.kind() == "prefix_expression"
+        {
+            let mut prefix_cursor = prev.walk();
+            for child in prev.children(&mut prefix_cursor) {
+                if child.kind() == "annotation" {
+                    annotations.push(node_text(child, source).to_string());
                 }
             }
         }
@@ -1759,10 +1768,10 @@ impl KotlinParser {
                 } else {
                     // Check if this navigation_suffix is part of an assignment target
                     // e.g., in `obj.prop = value`, `prop` in the navigation_suffix is being written to
-                    if let Some(grandparent) = parent.parent() {
-                        if grandparent.kind() == "directly_assignable_expression" {
-                            return Some(ReferenceKind::Write);
-                        }
+                    if let Some(grandparent) = parent.parent()
+                        && grandparent.kind() == "directly_assignable_expression"
+                    {
+                        return Some(ReferenceKind::Write);
                     }
                     Some(ReferenceKind::Read)
                 }
@@ -1874,20 +1883,20 @@ impl KotlinParser {
             Some(node)
         };
 
-        if let Some(nav_expr) = nav_expr {
-            if nav_expr.kind() == "navigation_expression" {
-                // Check if the parent is a call_expression
-                if let Some(parent) = nav_expr.parent() {
-                    if parent.kind() == "call_expression" {
-                        // The navigation_expression is a direct child of call_expression
-                        // Check if it has a call_suffix sibling
-                        let mut cursor = parent.walk();
-                        for sibling in parent.children(&mut cursor) {
-                            if sibling.kind() == "call_suffix" {
-                                // This navigation_expression is being called
-                                return true;
-                            }
-                        }
+        if let Some(nav_expr) = nav_expr
+            && nav_expr.kind() == "navigation_expression"
+        {
+            // Check if the parent is a call_expression
+            if let Some(parent) = nav_expr.parent()
+                && parent.kind() == "call_expression"
+            {
+                // The navigation_expression is a direct child of call_expression
+                // Check if it has a call_suffix sibling
+                let mut cursor = parent.walk();
+                for sibling in parent.children(&mut cursor) {
+                    if sibling.kind() == "call_suffix" {
+                        // This navigation_expression is being called
+                        return true;
                     }
                 }
             }
@@ -2110,15 +2119,42 @@ impl KotlinParser {
 
         // Regex to find simple function calls: identifier followed by (
         // We use captures to extract just the identifier
-        let call_pattern = regex::Regex::new(
-            r"\b([a-z][a-zA-Z0-9_]*)\s*\("
-        ).ok();
+        let call_pattern = Regex::new(r"\b([a-z][a-zA-Z0-9_]*)\s*\(").ok();
 
         let keywords: HashSet<&str> = [
-            "if", "when", "for", "while", "try", "catch", "finally", "return", "throw", "do",
-            "class", "fun", "val", "var", "object", "interface", "enum", "annotation",
-            "println", "print", "require", "check", "error", "assert", "apply", "also", "let", "run", "with"
-        ].iter().cloned().collect();
+            "if",
+            "when",
+            "for",
+            "while",
+            "try",
+            "catch",
+            "finally",
+            "return",
+            "throw",
+            "do",
+            "class",
+            "fun",
+            "val",
+            "var",
+            "object",
+            "interface",
+            "enum",
+            "annotation",
+            "println",
+            "print",
+            "require",
+            "check",
+            "error",
+            "assert",
+            "apply",
+            "also",
+            "let",
+            "run",
+            "with",
+        ]
+        .iter()
+        .cloned()
+        .collect();
 
         if let Some(re) = call_pattern {
             for cap in re.captures_iter(source) {
@@ -2137,7 +2173,12 @@ impl KotlinParser {
                     }
 
                     // Skip type constructors (PascalCase)
-                    if func_name.chars().next().map(|c| c.is_uppercase()).unwrap_or(true) {
+                    if func_name
+                        .chars()
+                        .next()
+                        .map(|c| c.is_uppercase())
+                        .unwrap_or(true)
+                    {
                         continue;
                     }
 

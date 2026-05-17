@@ -226,10 +226,10 @@ impl CoverageData {
         // Try matching by filename only
         if let Some(file_name) = file.file_name() {
             for (path, coverage) in &self.files {
-                if path.file_name() == Some(file_name) {
-                    if let Some(result) = coverage.is_line_covered(line) {
-                        return Some(result);
-                    }
+                if path.file_name() == Some(file_name)
+                    && let Some(result) = coverage.is_line_covered(line)
+                {
+                    return Some(result);
                 }
             }
         }

@@ -24,11 +24,11 @@
 //! }
 //! ```
 
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::path::PathBuf;
 
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{Declaration, DeclarationId, DeclarationKind, Graph, Language, Location};
+use crate::graph::{Declaration, DeclarationId, DeclarationKind, Language, Location};
 
 /// Location where a preference key is used
 #[derive(Debug, Clone)]
@@ -154,10 +154,10 @@ impl WriteOnlyPrefsDetector {
         for (line_num, line) in source.lines().enumerate() {
             // Check for write operations
             for pattern in &write_patterns {
-                if let Some(key) = self.extract_key_from_line(line, pattern) {
-                    if !self.should_skip_key(&key) {
-                        analysis.add_write(key, file.to_path_buf(), line_num + 1);
-                    }
+                if let Some(key) = self.extract_key_from_line(line, pattern)
+                    && !self.should_skip_key(&key)
+                {
+                    analysis.add_write(key, file.to_path_buf(), line_num + 1);
                 }
             }
 

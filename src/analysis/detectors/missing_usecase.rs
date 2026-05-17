@@ -41,7 +41,9 @@ pub struct MissingUseCaseDetector {
 
 impl MissingUseCaseDetector {
     pub fn new() -> Self {
-        Self { max_repositories: 2 }
+        Self {
+            max_repositories: 2,
+        }
     }
 
     /// Set maximum repositories before warning
@@ -100,14 +102,14 @@ impl Detector for MissingUseCaseDetector {
             let mut has_usecase = false;
 
             for child_id in &children {
-                if let Some(child) = graph.get_declaration(child_id) {
-                    if matches!(child.kind, DeclarationKind::Property | DeclarationKind::Field) {
-                        if Self::is_repository_property(&child.name) {
-                            repo_count += 1;
-                        }
-                        if Self::is_usecase_property(&child.name) {
-                            has_usecase = true;
-                        }
+                if let Some(child) = graph.get_declaration(child_id)
+                    && matches!(child.kind, DeclarationKind::Property | DeclarationKind::Field)
+                {
+                    if Self::is_repository_property(&child.name) {
+                        repo_count += 1;
+                    }
+                    if Self::is_usecase_property(&child.name) {
+                        has_usecase = true;
                     }
                 }
             }

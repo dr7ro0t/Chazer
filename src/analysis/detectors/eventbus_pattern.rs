@@ -49,7 +49,7 @@ impl EventBusPatternDetector {
             ],
             eventbus_patterns: vec![
                 "EventBus".to_string(),
-                "Event".to_string(),  // Classes ending in Event
+                "Event".to_string(), // Classes ending in Event
                 "RxBus".to_string(),
                 "MessageBus".to_string(),
             ],

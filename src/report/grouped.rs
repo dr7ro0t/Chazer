@@ -287,7 +287,11 @@ impl GroupedReporter {
 
             let remaining = sorted.len().saturating_sub(show_count);
             if remaining > 0 {
-                println!("  {} ... and {} more", "".dimmed(), remaining.to_string().yellow());
+                println!(
+                    "  {} ... and {} more",
+                    "".dimmed(),
+                    remaining.to_string().yellow()
+                );
             }
 
             println!();
@@ -351,7 +355,8 @@ impl GroupedReporter {
                 }
 
                 let loc = format!(":{}", item.declaration.location.line);
-                let confidence = ConfidenceIndicator::for_level(&item.confidence, item.runtime_confirmed);
+                let confidence =
+                    ConfidenceIndicator::for_level(&item.confidence, item.runtime_confirmed);
                 let name = StructureColors::symbol_name(&item.declaration.name);
 
                 println!("    {} {}  '{}'", loc.dimmed(), confidence, name);

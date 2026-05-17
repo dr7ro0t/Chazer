@@ -241,8 +241,7 @@ impl Detector for ViewLogicInViewModelDetector {
 
                 // Check if the type is a forbidden View/Context type
                 if self.is_forbidden_type(type_name) {
-                    let mut dead =
-                        DeadCode::new(decl.clone(), DeadCodeIssue::ViewLogicInViewModel);
+                    let mut dead = DeadCode::new(decl.clone(), DeadCodeIssue::ViewLogicInViewModel);
                     dead = dead.with_message(format!(
                         "Property '{}' of type '{}' in ViewModel holds View/Context reference. This causes memory leaks and violates MVVM.",
                         decl.name, type_name
@@ -266,8 +265,7 @@ impl Detector for ViewLogicInViewModelDetector {
                 });
 
                 if is_exact_match {
-                    let mut dead =
-                        DeadCode::new(decl.clone(), DeadCodeIssue::ViewLogicInViewModel);
+                    let mut dead = DeadCode::new(decl.clone(), DeadCodeIssue::ViewLogicInViewModel);
                     dead = dead.with_message(format!(
                         "Property '{}' in ViewModel may hold View/Context reference. This causes memory leaks and violates MVVM.",
                         decl.name

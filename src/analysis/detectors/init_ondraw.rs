@@ -60,17 +60,17 @@ impl InitOnDrawDetector {
 
     /// Check if class is a View subclass
     fn is_view_class(decl: &crate::graph::Declaration, graph: &Graph) -> bool {
-        if let Some(ref parent_id) = decl.parent {
-            if let Some(parent) = graph.get_declaration(parent_id) {
-                let lower = parent.name.to_lowercase();
-                return lower.contains("view")
-                    || lower.contains("canvas")
-                    || lower.contains("drawable")
-                    || parent
-                        .super_types
-                        .iter()
-                        .any(|s| s.contains("View") || s.contains("Drawable"));
-            }
+        if let Some(ref parent_id) = decl.parent
+            && let Some(parent) = graph.get_declaration(parent_id)
+        {
+            let lower = parent.name.to_lowercase();
+            return lower.contains("view")
+                || lower.contains("canvas")
+                || lower.contains("drawable")
+                || parent
+                    .super_types
+                    .iter()
+                    .any(|s| s.contains("View") || s.contains("Drawable"));
         }
         false
     }
@@ -103,7 +103,11 @@ impl Detector for InitOnDrawDetector {
             }
 
             // Check method size (larger methods more likely to have allocations)
-            let byte_size = decl.location.end_byte.saturating_sub(decl.location.start_byte);
+            let byte_size = decl
+                .location
+                .end_byte
+                .saturating_sub(decl.location.start_byte);
+
             if byte_size < self.min_method_bytes {
                 continue;
             }

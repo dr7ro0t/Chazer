@@ -67,16 +67,16 @@ impl MutableStateExposedDetector {
 
     /// Check if property is in a ViewModel class
     fn is_in_viewmodel(decl: &crate::graph::Declaration, graph: &Graph) -> bool {
-        if let Some(ref parent_id) = decl.parent {
-            if let Some(parent) = graph.get_declaration(parent_id) {
-                let name_lower = parent.name.to_lowercase();
-                let is_viewmodel = name_lower.contains("viewmodel")
-                    || parent
-                        .super_types
-                        .iter()
-                        .any(|s| s.to_lowercase().contains("viewmodel"));
-                return is_viewmodel;
-            }
+        if let Some(ref parent_id) = decl.parent
+            && let Some(parent) = graph.get_declaration(parent_id)
+        {
+            let name_lower = parent.name.to_lowercase();
+            let is_viewmodel = name_lower.contains("viewmodel")
+                || parent
+                    .super_types
+                    .iter()
+                    .any(|s| s.to_lowercase().contains("viewmodel"));
+            return is_viewmodel;
         }
         false
     }

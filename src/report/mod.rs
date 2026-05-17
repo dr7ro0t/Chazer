@@ -73,7 +73,6 @@ impl ReportOptions {
             declarations_count: None,
         }
     }
-
 }
 
 /// Reporter for outputting dead code analysis results
@@ -162,7 +161,7 @@ impl Reporter {
     fn print_final_summary(&self, dead_code: &[DeadCode]) {
         let mut reporter = SummaryReporter::new()
             .with_top_n(self.options.top_n)
-            .as_final_summary();
+            .into_final_summary();
         if let Some(files) = self.options.files_count {
             reporter = reporter.with_files_count(files);
         }

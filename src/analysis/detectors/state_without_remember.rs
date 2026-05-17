@@ -97,7 +97,10 @@ impl Detector for StateWithoutRememberDetector {
             }
 
             // Check function size (larger functions more likely to have state)
-            let byte_size = decl.location.end_byte.saturating_sub(decl.location.start_byte);
+            let byte_size = decl
+                .location
+                .end_byte
+                .saturating_sub(decl.location.start_byte);
             if byte_size < self.min_function_bytes {
                 continue;
             }

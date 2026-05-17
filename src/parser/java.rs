@@ -1,7 +1,7 @@
 // Java parser - some internal methods reserved for future use
 #![allow(dead_code)]
 
-use super::common::{node_text, point_to_location, ParseResult, Parser};
+use super::common::{ParseResult, Parser, node_text, point_to_location};
 use crate::graph::{
     Declaration, DeclarationId, DeclarationKind, Language, ReferenceKind, UnresolvedReference,
     Visibility,
@@ -517,38 +517,30 @@ impl JavaParser {
         // Field declaration can have multiple declarators
         let mut cursor = node.walk();
         for child in node.children(&mut cursor) {
-            if child.kind() == "variable_declarator" {
-                if let Some(name_node) = child.child_by_field_name("name") {
-                    let name = node_text(name_node, source).to_string();
-                    let location = point_to_location(
-                        path,
-                        child.start_position(),
-                        child.end_position(),
-                        child.start_byte(),
-                        child.end_byte(),
-                    );
+            if child.kind() == "variable_declarator"
+                && let Some(name_node) = child.child_by_field_name("name")
+            {
+                let name = node_text(name_node, source).to_string();
+                let location = point_to_location(
+                    path,
+                    child.start_position(),
+                    child.end_position(),
+                    child.start_byte(),
+                    child.end_byte(),
+                );
 
-                    let id = DeclarationId::new(
-                        path.to_path_buf(),
-                        child.start_byte(),
-                        child.end_byte(),
-                    );
+                let id =
+                    DeclarationId::new(path.to_path_buf(), child.start_byte(), child.end_byte());
 
-                    let mut decl = Declaration::new(
-                        id,
-                        name,
-                        DeclarationKind::Field,
-                        location,
-                        Language::Java,
-                    );
+                let mut decl =
+                    Declaration::new(id, name, DeclarationKind::Field, location, Language::Java);
 
-                    self.extract_modifiers(node, source, &mut decl);
-                    decl.annotations = self.extract_annotations(node, source);
-                    decl.parent = parent.clone();
-                    decl.type_name = field_type.clone();
+                self.extract_modifiers(node, source, &mut decl);
+                decl.annotations = self.extract_annotations(node, source);
+                decl.parent = parent.clone();
+                decl.type_name = field_type.clone();
 
-                    result.declarations.push(decl);
-                }
+                result.declarations.push(decl);
             }
         }
 
@@ -598,16 +590,17 @@ impl JavaParser {
     ) -> Result<()> {
         let mut cursor = node.walk();
         for child in node.children(&mut cursor) {
-            if child.kind() == "formal_parameter" || child.kind() == "spread_parameter" {
-                if let Some(name_node) = child.child_by_field_name("name") {
-                    let name = node_text(name_node, source).to_string();
-                    let location = point_to_location(
-                        path,
-                        child.start_position(),
-                        child.end_position(),
-                        child.start_byte(),
-                        child.end_byte(),
-                    );
+            if (child.kind() == "formal_parameter" || child.kind() == "spread_parameter")
+                && let Some(name_node) = child.child_by_field_name("name")
+            {
+                let name = node_text(name_node, source).to_string();
+                let location = point_to_location(
+                    path,
+                    child.start_position(),
+                    child.end_position(),
+                    child.start_byte(),
+                    child.end_byte(),
+                );
 
                     let id = DeclarationId::new(
                         path.to_path_buf(),
@@ -615,18 +608,17 @@ impl JavaParser {
                         child.end_byte(),
                     );
 
-                    let mut decl = Declaration::new(
-                        id,
-                        name,
-                        DeclarationKind::Parameter,
-                        location,
-                        Language::Java,
-                    );
+                let mut decl = Declaration::new(
+                    id,
+                    name,
+                    DeclarationKind::Parameter,
+                    location,
+                    Language::Java,
+                );
 
-                    decl.parent = Some(parent.clone());
+                decl.parent = Some(parent.clone());
 
-                    result.declarations.push(decl);
-                }
+                result.declarations.push(decl);
             }
         }
 
@@ -648,30 +640,34 @@ impl JavaParser {
 
             match current.kind() {
                 "identifier" => {
-                    if let Some(parent) = current.parent() {
-                        if let Some(kind) = self.determine_reference_kind(parent) {
-                            let name = node_text(current, source).to_string();
-                            let location = point_to_location(
-                                path,
-                                current.start_position(),
-                                current.end_position(),
-                                current.start_byte(),
-                                current.end_byte(),
-                            );
+                    if let Some(parent) = current.parent()
+                        && let Some(kind) = self.determine_reference_kind(parent)
+                    {
+                        let name = node_text(current, source).to_string();
+                        let location = point_to_location(
+                            path,
+                            current.start_position(),
+                            current.end_position(),
+                            current.start_byte(),
+                            current.end_byte(),
+                        );
 
-                            // Debug: log when we add the reference
-                            if name == "calculateEndTranslation" || name == "getZoomContainerDistanceFromRecyclerViewCenter" {
-                                debug!("  -> Added as reference with kind {:?}", kind);
-                            }
+                        // Debug: log when we add the reference
+                        if name == "calculateEndTranslation"
+                            || name == "getZoomContainerDistanceFromRecyclerViewCenter"
+                        {
+                            debug!("  -> Added as reference with kind {:?}", kind);
+                        }
 
-                            result.references.push(UnresolvedReference {
+                        result.references.push(
+                            UnresolvedReference {
                                 name,
                                 qualified_name: None,
                                 kind,
                                 location,
                                 imports: imports.to_vec(),
-                            });
-                        }
+                            }
+                        );
                     }
                 }
                 "type_identifier" => {
@@ -861,17 +857,25 @@ impl JavaParser {
             "variable_declarator" | "local_variable_declaration" => Some(ReferenceKind::Read),
 
             // Control flow statements - conditions and bodies
-            "if_statement" | "while_statement" | "do_statement" | "for_statement"
+            "if_statement"
+            | "while_statement"
+            | "do_statement"
+            | "for_statement"
             | "enhanced_for_statement" => Some(ReferenceKind::Read),
 
             // Switch statements
-            "switch_expression" | "switch_statement" | "switch_block" | "switch_label"
-            | "switch_rule" | "switch_block_statement_group" => Some(ReferenceKind::Read),
+            "switch_expression"
+            | "switch_statement"
+            | "switch_block"
+            | "switch_label"
+            | "switch_rule"
+            | "switch_block_statement_group" => Some(ReferenceKind::Read),
 
             // Exception handling
-            "throw_statement" | "catch_clause" | "try_statement" | "try_with_resources_statement" => {
-                Some(ReferenceKind::Read)
-            }
+            "throw_statement"
+            | "catch_clause"
+            | "try_statement"
+            | "try_with_resources_statement" => Some(ReferenceKind::Read),
 
             // Assert statement
             "assert_statement" => Some(ReferenceKind::Read),

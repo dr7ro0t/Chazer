@@ -48,7 +48,7 @@ impl SummaryReporter {
     }
 
     /// Mark this as a final summary appended to another report (different footer)
-    pub fn as_final_summary(mut self) -> Self {
+    pub fn into_final_summary(mut self) -> Self {
         self.is_final_summary = true;
         self
     }

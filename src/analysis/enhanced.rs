@@ -73,7 +73,10 @@ impl EnhancedAnalyzer {
     ) -> HashSet<DeclarationId> {
         use std::collections::VecDeque;
 
-        info!("  → Starting BFS from {} entry points...", entry_points.len());
+        info!(
+            "  → Starting BFS from {} entry points...",
+            entry_points.len()
+        );
 
         let inner_graph = graph.inner();
         let mut reachable: HashSet<DeclarationId> = entry_points.clone();
@@ -84,22 +87,29 @@ impl EnhancedAnalyzer {
         while let Some(current_id) = queue.pop_front() {
             visited_count += 1;
             if visited_count % 10000 == 0 {
-                info!("    Visited {} nodes, queue size: {}", visited_count, queue.len());
+                info!(
+                    "    Visited {} nodes, queue size: {}",
+                    visited_count,
+                    queue.len()
+                );
             }
 
             if let Some(node_idx) = graph.node_index(&current_id) {
                 // Visit all neighbors
                 for neighbor_idx in inner_graph.neighbors(node_idx) {
-                    if let Some(neighbor_id) = inner_graph.node_weight(neighbor_idx) {
-                        if reachable.insert(neighbor_id.clone()) {
-                            queue.push_back(neighbor_id.clone());
-                        }
+                    if let Some(neighbor_id) = inner_graph.node_weight(neighbor_idx)
+                        && reachable.insert(neighbor_id.clone())
+                    {
+                        queue.push_back(neighbor_id.clone());
                     }
                 }
             }
         }
 
-        info!("  → Found {} directly reachable declarations", reachable.len());
+        info!(
+            "  → Found {} directly reachable declarations",
+            reachable.len()
+        );
 
         // Mark ancestors as reachable
         info!("  → Marking ancestors...");
@@ -117,10 +127,11 @@ impl EnhancedAnalyzer {
             pass += 1;
             let mut class_members = HashSet::new();
             for decl in graph.declarations() {
-                if let Some(parent_id) = &decl.parent {
-                    if reachable.contains(parent_id) && !reachable.contains(&decl.id) {
-                        class_members.insert(decl.id.clone());
-                    }
+                if let Some(parent_id) = &decl.parent
+                    && reachable.contains(parent_id)
+                    && !reachable.contains(&decl.id)
+                {
+                    class_members.insert(decl.id.clone());
                 }
             }
             if class_members.is_empty() {
@@ -140,12 +151,11 @@ impl EnhancedAnalyzer {
         id: &DeclarationId,
         ancestors: &mut HashSet<DeclarationId>,
     ) {
-        if let Some(decl) = graph.get_declaration(id) {
-            if let Some(parent_id) = &decl.parent {
-                if ancestors.insert(parent_id.clone()) {
-                    Self::collect_ancestors(graph, parent_id, ancestors);
-                }
-            }
+        if let Some(decl) = graph.get_declaration(id)
+            && let Some(parent_id) = &decl.parent
+            && ancestors.insert(parent_id.clone())
+        {
+            Self::collect_ancestors(graph, parent_id, ancestors);
         }
     }
 
@@ -155,7 +165,10 @@ impl EnhancedAnalyzer {
         graph: &Graph,
         reachable: &HashSet<DeclarationId>,
     ) -> Vec<DeadCode> {
-        info!("  → Scanning {} declarations for dead code...", graph.declarations().count());
+        info!(
+            "  → Scanning {} declarations for dead code...",
+            graph.declarations().count()
+        );
         let declarations: Vec<_> = graph.declarations().collect();
 
         declarations
@@ -195,25 +208,21 @@ impl EnhancedAnalyzer {
         }
 
         // Skip members of unreachable classes (report class instead)
-        if !self.strict_mode {
-            if let Some(parent_id) = &decl.parent {
-                if !reachable.contains(parent_id) {
-                    if let Some(parent) = graph.get_declaration(parent_id) {
-                        if parent.kind.is_type() {
-                            return true;
-                        }
-                    }
-                }
-            }
+        if !self.strict_mode
+            && let Some(parent_id) = &decl.parent
+            && !reachable.contains(parent_id)
+            && let Some(parent) = graph.get_declaration(parent_id)
+            && parent.kind.is_type()
+        {
+            return true;
         }
 
         // Skip constructors of unreachable classes
-        if decl.kind == DeclarationKind::Constructor {
-            if let Some(parent_id) = &decl.parent {
-                if !reachable.contains(parent_id) {
-                    return true;
-                }
-            }
+        if decl.kind == DeclarationKind::Constructor
+            && let Some(parent_id) = &decl.parent
+            && !reachable.contains(parent_id)
+        {
+            return true;
         }
 
         // Skip override methods

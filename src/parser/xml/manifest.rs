@@ -1,7 +1,7 @@
 use super::XmlParseResult;
 use miette::Result;
-use quick_xml::events::Event;
 use quick_xml::Reader;
+use quick_xml::events::Event;
 use std::path::Path;
 use tracing::debug;
 
@@ -64,10 +64,11 @@ impl ManifestParser {
                         }
 
                         // Check if value looks like a class name
-                        if let Some(value) = value_value {
-                            if value.contains('.') && !value.contains(' ') {
-                                result.class_references.insert(value);
-                            }
+                        if let Some(value) = value_value
+                            && value.contains('.')
+                            && !value.contains(' ')
+                        {
+                            result.class_references.insert(value);
                         }
                     }
                 }
@@ -142,15 +143,21 @@ mod tests {
             .unwrap();
 
         assert_eq!(result.package, Some("com.example.app".to_string()));
-        assert!(result
-            .class_references
-            .contains("com.example.app.MainActivity"));
-        assert!(result
-            .class_references
-            .contains("com.example.app.MyService"));
-        assert!(result
-            .class_references
-            .contains("com.example.app.MyApplication"));
+        assert!(
+            result
+                .class_references
+                .contains("com.example.app.MainActivity")
+        );
+        assert!(
+            result
+                .class_references
+                .contains("com.example.app.MyService")
+        );
+        assert!(
+            result
+                .class_references
+                .contains("com.example.app.MyApplication")
+        );
     }
 
     #[test]

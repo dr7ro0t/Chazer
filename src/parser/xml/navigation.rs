@@ -5,8 +5,8 @@
 
 use super::XmlParseResult;
 use miette::Result;
-use quick_xml::events::Event;
 use quick_xml::Reader;
+use quick_xml::events::Event;
 use std::path::Path;
 use tracing::debug;
 
@@ -153,12 +153,16 @@ mod tests {
         let result = parser.parse(Path::new("nav_main.xml"), nav).unwrap();
 
         assert!(result.class_references.contains("com.example.HomeFragment"));
-        assert!(result
-            .class_references
-            .contains("com.example.DetailFragment"));
-        assert!(result
-            .class_references
-            .contains("com.example.ConfirmDialogFragment"));
+        assert!(
+            result
+                .class_references
+                .contains("com.example.DetailFragment")
+        );
+        assert!(
+            result
+                .class_references
+                .contains("com.example.ConfirmDialogFragment")
+        );
     }
 
     #[test]
@@ -181,9 +185,11 @@ mod tests {
 
         let result = parser.parse(Path::new("nav_main.xml"), nav).unwrap();
 
-        assert!(result
-            .class_references
-            .contains("com.example.DetailFragment"));
+        assert!(
+            result
+                .class_references
+                .contains("com.example.DetailFragment")
+        );
         assert!(result.class_references.contains("com.example.model.Item"));
     }
 }

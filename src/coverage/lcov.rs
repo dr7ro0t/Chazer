@@ -89,14 +89,14 @@ impl LcovParser {
                     let line_nr: u32 = parts[0].parse().unwrap_or(0);
                     let hit_count: u32 = parts[1].parse().unwrap_or(0);
 
-                    if line_nr > 0 {
-                        if let Some(ref mut fc) = current_file_coverage {
-                            if hit_count > 0 {
-                                fc.covered_lines.insert(line_nr);
-                                fc.uncovered_lines.remove(&line_nr);
-                            } else if !fc.covered_lines.contains(&line_nr) {
-                                fc.uncovered_lines.insert(line_nr);
-                            }
+                    if line_nr > 0
+                        && let Some(ref mut fc) = current_file_coverage
+                    {
+                        if hit_count > 0 {
+                            fc.covered_lines.insert(line_nr);
+                            fc.uncovered_lines.remove(&line_nr);
+                        } else if !fc.covered_lines.contains(&line_nr) {
+                            fc.uncovered_lines.insert(line_nr);
                         }
                     }
                 }
@@ -111,13 +111,13 @@ impl LcovParser {
                         parts[3].parse().unwrap_or(0)
                     };
 
-                    if line_nr > 0 {
-                        if let Some(ref mut fc) = current_file_coverage {
-                            let entry = fc.branch_coverage.entry(line_nr).or_insert((0, 0));
-                            entry.1 += 1; // total branches
-                            if hit_count > 0 {
-                                entry.0 += 1; // covered branches
-                            }
+                    if line_nr > 0
+                        && let Some(ref mut fc) = current_file_coverage
+                    {
+                        let entry = fc.branch_coverage.entry(line_nr).or_insert((0, 0));
+                        entry.1 += 1; // total branches
+                        if hit_count > 0 {
+                            entry.0 += 1; // covered branches
                         }
                     }
                 }
@@ -184,10 +184,10 @@ impl CoverageParser for LcovParser {
         }
 
         // Check file name patterns
-        if let Some(name) = path.file_name().and_then(|n| n.to_str()) {
-            if name.contains("lcov") || name.contains("coverage.info") {
-                return true;
-            }
+        if let Some(name) = path.file_name().and_then(|n| n.to_str())
+            && (name.contains("lcov") || name.contains("coverage.info"))
+        {
+            return true;
         }
 
         // Check content for LCOV markers

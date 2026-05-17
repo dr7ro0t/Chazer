@@ -61,17 +61,16 @@ impl MemoryLeakRiskDetector {
 
     /// Check if declaration is in a static context (object, companion object)
     fn is_static_context(decl: &crate::graph::Declaration) -> bool {
-        decl.is_static
-            || decl.modifiers.iter().any(|m| m == "static")
+        decl.is_static || decl.modifiers.iter().any(|m| m == "static")
     }
 
     /// Check if parent is a Kotlin object or companion object
     fn is_in_object_or_companion(&self, decl: &crate::graph::Declaration, graph: &Graph) -> bool {
-        if let Some(ref parent_id) = decl.parent {
-            if let Some(parent) = graph.get_declaration(parent_id) {
-                return matches!(parent.kind, DeclarationKind::Object)
-                    || parent.name.contains("Companion");
-            }
+        if let Some(ref parent_id) = decl.parent
+            && let Some(parent) = graph.get_declaration(parent_id)
+        {
+            return matches!(parent.kind, DeclarationKind::Object)
+                || parent.name.contains("Companion");
         }
         false
     }
@@ -132,20 +131,18 @@ impl Detector for MemoryLeakRiskDetector {
             {
                 // Check children for leak-prone types
                 for child_id in graph.get_children(&decl.id) {
-                    if let Some(child) = graph.get_declaration(child_id) {
-                        if matches!(child.kind, DeclarationKind::Property | DeclarationKind::Field)
-                            && self.is_leak_prone_type(&child.name)
-                        {
-                            let mut dead =
-                                DeadCode::new(decl.clone(), DeadCodeIssue::MemoryLeakRisk);
-                            dead = dead.with_message(format!(
+                    if let Some(child) = graph.get_declaration(child_id)
+                        && matches!(child.kind,DeclarationKind::Property | DeclarationKind::Field)
+                        && self.is_leak_prone_type(&child.name)
+                    {
+                        let mut dead = DeadCode::new(decl.clone(), DeadCodeIssue::MemoryLeakRisk);
+                        dead = dead.with_message(format!(
                                 "Object '{}' contains leak-prone property '{}'. Singleton with Context/Activity reference causes memory leaks.",
                                 decl.name, child.name
                             ));
-                            dead = dead.with_confidence(Confidence::High);
-                            issues.push(dead);
-                            break; // One warning per object
-                        }
+                        dead = dead.with_confidence(Confidence::High);
+                        issues.push(dead);
+                        break; // One warning per object
                     }
                 }
             }
@@ -268,7 +265,10 @@ mod tests {
         let detector = MemoryLeakRiskDetector::new();
         let issues = detector.detect(&graph);
 
-        assert!(issues.is_empty(), "Non-leak-prone types should not be flagged");
+        assert!(
+            issues.is_empty(),
+            "Non-leak-prone types should not be flagged"
+        );
     }
 
     #[test]

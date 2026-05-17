@@ -63,12 +63,11 @@ impl UnusedParamDetector {
             }
 
             // Skip interface methods
-            if let Some(grandparent_id) = &parent.parent {
-                if let Some(grandparent) = graph.get_declaration(grandparent_id) {
-                    if grandparent.kind == DeclarationKind::Interface {
-                        return true;
-                    }
-                }
+            if let Some(grandparent_id) = &parent.parent
+                && let Some(grandparent) = graph.get_declaration(grandparent_id)
+                && grandparent.kind == DeclarationKind::Interface
+            {
+                return true;
             }
 
             // Skip constructors (parameters often used for property initialization)
@@ -109,10 +108,10 @@ impl Detector for UnusedParamDetector {
             }
 
             // Check if parent function should be skipped
-            if let Some(ref parent_id) = decl.parent {
-                if self.should_skip_parent(graph, parent_id) {
-                    continue;
-                }
+            if let Some(ref parent_id) = decl.parent
+                && self.should_skip_parent(graph, parent_id)
+            {
+                continue;
             }
 
             // Check if the parameter is referenced anywhere

@@ -125,7 +125,10 @@ impl Detector for HeavyViewModelDetector {
 
         // Analyze each ViewModel
         for vm in &viewmodels {
-            let children = viewmodel_children.get(&vm.id).map(|v| v.as_slice()).unwrap_or(&[]);
+            let children = viewmodel_children
+                .get(&vm.id)
+                .map(|v| v.as_slice())
+                .unwrap_or(&[]);
 
             // Count constructor parameters
             let param_count = children

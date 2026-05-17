@@ -58,14 +58,14 @@ impl MainThreadDatabaseDetector {
 
     /// Check if method is a DAO method (non-suspend = blocking)
     fn is_dao_method(decl: &crate::graph::Declaration, graph: &Graph) -> bool {
-        if let Some(ref parent_id) = decl.parent {
-            if let Some(parent) = graph.get_declaration(parent_id) {
-                return parent.name.to_lowercase().contains("dao")
-                    || parent
-                        .annotations
-                        .iter()
-                        .any(|a| a.to_lowercase().contains("dao"));
-            }
+        if let Some(ref parent_id) = decl.parent
+            && let Some(parent) = graph.get_declaration(parent_id)
+        {
+            return parent.name.to_lowercase().contains("dao")
+                || parent
+                    .annotations
+                    .iter()
+                    .any(|a| a.to_lowercase().contains("dao"));
         }
         false
     }

@@ -1,5 +1,6 @@
 // Configuration loader - some methods reserved for future use
 #![allow(dead_code)]
+#![allow(clippy::derivable_impls)]
 
 use miette::{IntoDiagnostic, Result, WrapErr};
 use serde::{Deserialize, Serialize};

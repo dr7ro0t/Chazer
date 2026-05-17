@@ -94,10 +94,10 @@ impl ReachabilityAnalyzer {
                         reachable.insert(node_id.clone());
 
                         // Also mark parent declarations as reachable
-                        if let Some(decl) = graph.get_declaration(node_id) {
-                            if let Some(parent_id) = &decl.parent {
-                                reachable.insert(parent_id.clone());
-                            }
+                        if let Some(decl) = graph.get_declaration(node_id)
+                            && let Some(parent_id) = &decl.parent
+                        {
+                            reachable.insert(parent_id.clone());
                         }
                     }
                 }
@@ -163,12 +163,11 @@ impl ReachabilityAnalyzer {
         id: &DeclarationId,
         ancestors: &mut HashSet<DeclarationId>,
     ) {
-        if let Some(decl) = graph.get_declaration(id) {
-            if let Some(parent_id) = &decl.parent {
-                if ancestors.insert(parent_id.clone()) {
-                    Self::collect_ancestors(graph, parent_id, ancestors);
-                }
-            }
+        if let Some(decl) = graph.get_declaration(id)
+            && let Some(parent_id) = &decl.parent
+            && ancestors.insert(parent_id.clone())
+        {
+            Self::collect_ancestors(graph, parent_id, ancestors);
         }
     }
 
@@ -188,23 +187,22 @@ impl ReachabilityAnalyzer {
 
         // Skip private/internal members of unreachable classes
         // (they should be reported at the class level, not individually)
-        if let Some(parent_id) = &decl.parent {
-            if let Some(parent) = graph.get_declaration(parent_id) {
-                // If parent is a class/object and also unreferenced,
-                // skip the member (parent will be reported instead)
-                if parent.kind.is_type() && !graph.is_referenced(parent_id) {
-                    return true;
-                }
+        if let Some(parent_id) = &decl.parent
+            && let Some(parent) = graph.get_declaration(parent_id)
+        {
+            // If parent is a class/object and also unreferenced,
+            // skip the member (parent will be reported instead)
+            if parent.kind.is_type() && !graph.is_referenced(parent_id) {
+                return true;
             }
         }
 
         // Skip constructors of unreachable classes
-        if decl.kind == DeclarationKind::Constructor {
-            if let Some(parent_id) = &decl.parent {
-                if !graph.is_referenced(parent_id) {
-                    return true;
-                }
-            }
+        if decl.kind == DeclarationKind::Constructor
+            && let Some(parent_id) = &decl.parent
+            && !graph.is_referenced(parent_id)
+        {
+            return true;
         }
 
         // Skip overridden methods (they might be called via interface/base class)

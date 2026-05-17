@@ -7,8 +7,8 @@
 
 use super::{CoverageData, CoverageParser, FileCoverage};
 use miette::{IntoDiagnostic, Result};
-use quick_xml::events::Event;
 use quick_xml::Reader;
+use quick_xml::events::Event;
 use std::path::{Path, PathBuf};
 
 /// Parser for JaCoCo XML coverage reports
@@ -142,10 +142,10 @@ impl JacocoParser {
                                                 .uncovered_classes
                                                 .insert(current_class.clone());
                                         }
-                                        if let Some(ref mut fc) = current_file_coverage {
-                                            if !fc.covered_classes.contains(&current_class) {
-                                                fc.uncovered_classes.insert(current_class.clone());
-                                            }
+                                        if let Some(ref mut fc) = current_file_coverage
+                                            && !fc.covered_classes.contains(&current_class)
+                                        {
+                                            fc.uncovered_classes.insert(current_class.clone());
                                         }
                                     }
                                 }
@@ -155,12 +155,11 @@ impl JacocoParser {
                                     // just counts - actual line info comes from sourcefile
                                     let _ = &current_file_coverage;
                                 }
-                                "CLASS" => {
-                                    if covered > 0 {
-                                        coverage_data.covered_classes.insert(current_class.clone());
-                                        coverage_data.uncovered_classes.remove(&current_class);
-                                    }
+                                "CLASS" if covered > 0 => {
+                                    coverage_data.covered_classes.insert(current_class.clone());
+                                    coverage_data.uncovered_classes.remove(&current_class);
                                 }
+                                "CLASS" => {}
                                 _ => {}
                             }
                         }
@@ -217,23 +216,23 @@ impl JacocoParser {
                                 }
                             }
 
-                            if line_nr > 0 {
-                                if let Some(ref mut fc) = current_file_coverage {
-                                    if covered_instructions > 0 {
-                                        fc.covered_lines.insert(line_nr);
-                                        fc.uncovered_lines.remove(&line_nr);
-                                    } else if missed_instructions > 0
-                                        && !fc.covered_lines.contains(&line_nr)
-                                    {
-                                        fc.uncovered_lines.insert(line_nr);
-                                    }
+                            if line_nr > 0
+                                && let Some(ref mut fc) = current_file_coverage
+                            {
+                                if covered_instructions > 0 {
+                                    fc.covered_lines.insert(line_nr);
+                                    fc.uncovered_lines.remove(&line_nr);
+                                } else if missed_instructions > 0
+                                    && !fc.covered_lines.contains(&line_nr)
+                                {
+                                    fc.uncovered_lines.insert(line_nr);
+                                }
 
-                                    // Branch coverage
-                                    let total_branches = covered_branches + missed_branches;
-                                    if total_branches > 0 {
-                                        fc.branch_coverage
-                                            .insert(line_nr, (covered_branches, total_branches));
-                                    }
+                                // Branch coverage
+                                let total_branches = covered_branches + missed_branches;
+                                if total_branches > 0 {
+                                    fc.branch_coverage
+                                        .insert(line_nr, (covered_branches, total_branches));
                                 }
                             }
                         }
@@ -310,7 +309,7 @@ impl CoverageParser for JacocoParser {
 
     fn can_parse(&self, path: &Path) -> bool {
         // Check file extension
-        if path.extension().map_or(true, |e| e != "xml") {
+        if path.extension().is_none_or(|e| e != "xml") {
             return false;
         }
 

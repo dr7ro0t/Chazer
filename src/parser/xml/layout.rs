@@ -1,7 +1,7 @@
 use super::{MethodReference, XmlParseResult};
 use miette::Result;
-use quick_xml::events::Event;
 use quick_xml::Reader;
+use quick_xml::events::Event;
 use regex::Regex;
 use std::path::Path;
 use std::sync::LazyLock;
@@ -599,9 +599,24 @@ mod tests {
 
         let result = parser.parse(Path::new("layout.xml"), layout).unwrap();
 
-        assert!(result.method_references.iter().any(|r| r.method_name == "onSaveClicked"));
-        assert!(result.method_references.iter().any(|r| r.method_name == "onCancelClicked"));
-        assert!(result.method_references.iter().any(|r| r.method_name == "onResetClicked"));
+        assert!(
+            result
+                .method_references
+                .iter()
+                .any(|r| r.method_name == "onSaveClicked")
+        );
+        assert!(
+            result
+                .method_references
+                .iter()
+                .any(|r| r.method_name == "onCancelClicked")
+        );
+        assert!(
+            result
+                .method_references
+                .iter()
+                .any(|r| r.method_name == "onResetClicked")
+        );
     }
 
     #[test]
@@ -637,7 +652,9 @@ mod tests {
     </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>"#;
 
-        let result = parser.parse(Path::new("activity_welcome.xml"), layout).unwrap();
+        let result = parser
+            .parse(Path::new("activity_welcome.xml"), layout)
+            .unwrap();
 
         // Check variable is extracted
         assert_eq!(

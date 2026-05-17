@@ -1,5 +1,5 @@
 use clap::{CommandFactory, Parser};
-use clap_complete::{generate, Shell};
+use clap_complete::{Shell, generate};
 use colored::Colorize;
 use miette::Result;
 use std::path::PathBuf;
@@ -606,7 +606,7 @@ fn run_analysis_internal(
 }
 
 fn init_logging(verbose: bool, quiet: bool) {
-    use tracing_subscriber::{fmt, EnvFilter};
+    use tracing_subscriber::{EnvFilter, fmt};
 
     let filter = if quiet {
         EnvFilter::new("error")
@@ -962,19 +962,19 @@ fn run_analysis(config: &Config, cli: &Cli) -> Result<()> {
         // Analyze all Kotlin files for SharedPreferences usage
         let mut prefs_analysis = analysis::detectors::SharedPrefsAnalysis::new();
         for file in &files {
-            if file.file_type == FileType::Kotlin {
-                if let Ok(content) = std::fs::read_to_string(&file.path) {
-                    let file_analysis = prefs_detector.analyze_source(&content, &file.path);
-                    // Merge results
-                    for (key, locs) in file_analysis.writes {
-                        for loc in locs {
-                            prefs_analysis.add_write(key.clone(), loc.file, loc.line);
-                        }
+            if file.file_type == FileType::Kotlin
+                && let Ok(content) = std::fs::read_to_string(&file.path)
+            {
+                let file_analysis = prefs_detector.analyze_source(&content, &file.path);
+                // Merge results
+                for (key, locs) in file_analysis.writes {
+                    for loc in locs {
+                        prefs_analysis.add_write(key.clone(), loc.file, loc.line);
                     }
-                    for (key, locs) in file_analysis.reads {
-                        for loc in locs {
-                            prefs_analysis.add_read(key.clone(), loc.file, loc.line);
-                        }
+                }
+                for (key, locs) in file_analysis.reads {
+                    for loc in locs {
+                        prefs_analysis.add_read(key.clone(), loc.file, loc.line);
                     }
                 }
             }
@@ -1018,11 +1018,11 @@ fn run_analysis(config: &Config, cli: &Cli) -> Result<()> {
         // Analyze all Kotlin files for DAO definitions
         let mut dao_analysis = analysis::detectors::DaoCollectionAnalysis::new();
         for file in &files {
-            if file.file_type == FileType::Kotlin {
-                if let Ok(content) = std::fs::read_to_string(&file.path) {
-                    let file_analysis = dao_detector.analyze_source(&content, &file.path);
-                    dao_analysis.daos.extend(file_analysis.daos);
-                }
+            if file.file_type == FileType::Kotlin
+                && let Ok(content) = std::fs::read_to_string(&file.path)
+            {
+                let file_analysis = dao_detector.analyze_source(&content, &file.path);
+                dao_analysis.daos.extend(file_analysis.daos);
             }
         }
 

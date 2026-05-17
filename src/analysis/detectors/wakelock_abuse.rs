@@ -52,13 +52,13 @@ impl WakeLockAbuseDetector {
 
     /// Check if class name suggests WakeLock handling
     fn class_handles_wakelock(decl: &crate::graph::Declaration, graph: &Graph) -> bool {
-        if let Some(ref parent_id) = decl.parent {
-            if let Some(parent) = graph.get_declaration(parent_id) {
-                let lower = parent.name.to_lowercase();
-                return lower.contains("wakelock")
-                    || lower.contains("power")
-                    || lower.contains("service");
-            }
+        if let Some(ref parent_id) = decl.parent
+            && let Some(parent) = graph.get_declaration(parent_id)
+        {
+            let lower = parent.name.to_lowercase();
+            return lower.contains("wakelock")
+                || lower.contains("power")
+                || lower.contains("service");
         }
         false
     }
@@ -86,7 +86,10 @@ impl Detector for WakeLockAbuseDetector {
             }
 
             // Check method size
-            let byte_size = decl.location.end_byte.saturating_sub(decl.location.start_byte);
+            let byte_size = decl
+                .location
+                .end_byte
+                .saturating_sub(decl.location.start_byte);
             if byte_size < self.min_method_bytes {
                 continue;
             }

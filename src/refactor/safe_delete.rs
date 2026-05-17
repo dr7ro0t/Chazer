@@ -1,7 +1,7 @@
 use crate::analysis::DeadCode;
 use crate::refactor::undo::UndoScript;
 use colored::Colorize;
-use dialoguer::{theme::ColorfulTheme, Confirm, MultiSelect};
+use dialoguer::{Confirm, MultiSelect, theme::ColorfulTheme};
 use miette::{IntoDiagnostic, Result};
 use std::collections::HashMap;
 use std::path::PathBuf;

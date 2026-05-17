@@ -155,10 +155,10 @@ impl ReportGenerator {
         let mut dead_classes: Vec<String> = Vec::new();
         for class_name in usage.dead_classes().iter() {
             // Apply package filter
-            if let Some(ref prefix) = self.package_filter {
-                if !class_name.starts_with(prefix) {
-                    continue;
-                }
+            if let Some(ref prefix) = self.package_filter
+                && !class_name.starts_with(prefix)
+            {
+                continue;
             }
 
             // Filter out generated code
@@ -254,10 +254,10 @@ impl ReportGenerator {
                 }
 
                 // Apply package filter
-                if let Some(ref prefix) = self.package_filter {
-                    if !entry.class_name.starts_with(prefix) {
-                        continue;
-                    }
+                if let Some(ref prefix) = self.package_filter
+                    && !entry.class_name.starts_with(prefix)
+                {
+                    continue;
                 }
 
                 // Filter out generated code
@@ -295,10 +295,10 @@ impl ReportGenerator {
                 }
 
                 // Apply package filter
-                if let Some(ref prefix) = self.package_filter {
-                    if !entry.class_name.starts_with(prefix) {
-                        continue;
-                    }
+                if let Some(ref prefix) = self.package_filter
+                    && !entry.class_name.starts_with(prefix)
+                {
+                    continue;
                 }
 
                 // Filter out generated code

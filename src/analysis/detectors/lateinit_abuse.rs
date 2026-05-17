@@ -112,8 +112,7 @@ impl Detector for LateinitAbuseDetector {
                 if let Some(class_decl) = graph.get_declaration(parent_id) {
                     let prop_names: Vec<_> =
                         lateinit_props.iter().map(|p| p.name.as_str()).collect();
-                    let mut dead =
-                        DeadCode::new(class_decl.clone(), DeadCodeIssue::LateinitAbuse);
+                    let mut dead = DeadCode::new(class_decl.clone(), DeadCodeIssue::LateinitAbuse);
                     dead = dead.with_message(format!(
                         "Class '{}' has {} lateinit properties ({}). Consider constructor injection or lazy initialization.",
                         class_decl.name,

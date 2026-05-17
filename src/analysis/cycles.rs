@@ -8,6 +8,7 @@
 //
 // This is inspired by Meta's SCARF system which detects mutually dependent dead code.
 
+use std::cmp::Reverse;
 use crate::graph::{DeclarationId, DeclarationKind, Graph};
 use petgraph::algo::tarjan_scc;
 use std::collections::HashSet;
@@ -112,7 +113,7 @@ impl CycleDetector {
         }
 
         // Sort by size (largest first)
-        dead_cycles.sort_by(|a, b| b.size.cmp(&a.size));
+        dead_cycles.sort_by_key(|b| Reverse(b.size));
 
         dead_cycles
     }

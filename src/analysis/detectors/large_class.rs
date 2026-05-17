@@ -112,7 +112,11 @@ impl Detector for LargeClassDetector {
                 let message = if exceeds_methods && exceeds_properties {
                     format!(
                         "Class '{}' has {} methods (max: {}) and {} properties (max: {}). Consider splitting into smaller classes.",
-                        decl.name, method_count, self.max_methods, property_count, self.max_properties
+                        decl.name,
+                        method_count,
+                        self.max_methods,
+                        property_count,
+                        self.max_properties
                     )
                 } else if exceeds_methods {
                     format!(

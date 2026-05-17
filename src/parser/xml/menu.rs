@@ -5,8 +5,8 @@
 
 use super::XmlParseResult;
 use miette::Result;
-use quick_xml::events::Event;
 use quick_xml::Reader;
+use quick_xml::events::Event;
 use std::path::Path;
 use tracing::debug;
 
@@ -131,11 +131,15 @@ mod tests {
 
         let result = parser.parse(Path::new("menu_main.xml"), menu).unwrap();
 
-        assert!(result
-            .class_references
-            .contains("androidx.appcompat.widget.SearchView"));
-        assert!(result
-            .class_references
-            .contains("androidx.appcompat.widget.ShareActionProvider"));
+        assert!(
+            result
+                .class_references
+                .contains("androidx.appcompat.widget.SearchView")
+        );
+        assert!(
+            result
+                .class_references
+                .contains("androidx.appcompat.widget.ShareActionProvider")
+        );
     }
 }
