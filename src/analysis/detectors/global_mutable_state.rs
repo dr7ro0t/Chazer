@@ -28,7 +28,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph, Visibility};
+use crate::graph::{Declaration, DeclarationKind, Graph, Visibility};
 
 /// Detector for global mutable state in Kotlin objects
 pub struct GlobalMutableStateDetector {
@@ -54,12 +54,12 @@ impl GlobalMutableStateDetector {
     }
 
     /// Check if a declaration is a Kotlin object
-    fn is_kotlin_object(&self, decl: &crate::graph::Declaration) -> bool {
+    fn is_kotlin_object(&self, decl: &Declaration) -> bool {
         decl.kind == DeclarationKind::Object
     }
 
     /// Check if a property is a mutable public var
-    fn is_public_mutable_var(&self, decl: &crate::graph::Declaration) -> bool {
+    fn is_public_mutable_var(&self, decl: &Declaration) -> bool {
         // Must be a property
         if decl.kind != DeclarationKind::Property {
             return false;

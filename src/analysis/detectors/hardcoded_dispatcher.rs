@@ -37,7 +37,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph};
+use crate::graph::{Declaration, DeclarationKind, Graph};
 
 /// Detector for hardcoded Dispatcher usage
 pub struct HardcodedDispatcherDetector {
@@ -65,7 +65,7 @@ impl HardcodedDispatcherDetector {
     }
 
     /// Check if in a test file
-    fn is_test_file(decl: &crate::graph::Declaration) -> bool {
+    fn is_test_file(decl: &Declaration) -> bool {
         let file_path = decl.location.file.to_string_lossy().to_lowercase();
         file_path.contains("test") || file_path.contains("androidtest")
     }

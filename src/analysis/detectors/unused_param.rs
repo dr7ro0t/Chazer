@@ -5,7 +5,7 @@
 
 use super::Detector;
 use crate::analysis::{DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph};
+use crate::graph::{DeclarationId, DeclarationKind, Graph};
 
 /// Detector for unused function parameters
 pub struct UnusedParamDetector {
@@ -45,7 +45,7 @@ impl UnusedParamDetector {
     }
 
     /// Check if a parameter's parent function should be skipped
-    fn should_skip_parent(&self, graph: &Graph, parent_id: &crate::graph::DeclarationId) -> bool {
+    fn should_skip_parent(&self, graph: &Graph, parent_id: &DeclarationId) -> bool {
         if let Some(parent) = graph.get_declaration(parent_id) {
             // Skip abstract methods
             if self.skip_abstract && parent.is_abstract {

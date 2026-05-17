@@ -35,7 +35,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph, Language};
+use crate::graph::{Declaration, DeclarationKind, Graph, Language};
 
 /// Detector for object allocation in loops or performance-critical methods
 pub struct ObjectAllocationInLoopDetector {
@@ -72,7 +72,7 @@ impl ObjectAllocationInLoopDetector {
     }
 
     /// Check if method likely contains loops based on size
-    fn likely_has_loops(&self, decl: &crate::graph::Declaration) -> bool {
+    fn likely_has_loops(&self, decl: &Declaration) -> bool {
         let byte_size = decl
             .location
             .end_byte

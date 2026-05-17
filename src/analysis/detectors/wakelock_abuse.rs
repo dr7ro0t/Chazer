@@ -26,7 +26,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph, Language};
+use crate::graph::{Declaration, DeclarationKind, Graph, Language};
 
 /// Detector for WakeLock abuse
 pub struct WakeLockAbuseDetector {
@@ -51,7 +51,7 @@ impl WakeLockAbuseDetector {
     }
 
     /// Check if class name suggests WakeLock handling
-    fn class_handles_wakelock(decl: &crate::graph::Declaration, graph: &Graph) -> bool {
+    fn class_handles_wakelock(decl: &Declaration, graph: &Graph) -> bool {
         if let Some(ref parent_id) = decl.parent
             && let Some(parent) = graph.get_declaration(parent_id)
         {

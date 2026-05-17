@@ -26,7 +26,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph};
+use crate::graph::{Declaration, DeclarationKind, Graph};
 
 /// Detector for View/Context references in ViewModel
 pub struct ViewLogicInViewModelDetector {

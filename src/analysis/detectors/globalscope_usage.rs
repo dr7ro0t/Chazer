@@ -34,6 +34,7 @@
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
 use crate::graph::{DeclarationKind, Graph};
+use std::path::Path;
 
 /// Detector for GlobalScope usage in coroutines
 pub struct GlobalScopeUsageDetector {
@@ -56,7 +57,7 @@ impl GlobalScopeUsageDetector {
     }
 
     /// Check if file is a test file
-    fn is_test_file(path: &std::path::Path) -> bool {
+    fn is_test_file(path: &Path) -> bool {
         let path_str = path.to_string_lossy();
         path_str.contains("/test/")
             || path_str.contains("/androidTest/")

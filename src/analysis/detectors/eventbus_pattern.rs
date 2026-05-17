@@ -30,7 +30,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph};
+use crate::graph::{Declaration, DeclarationKind, Graph};
 
 /// Detector for EventBus pattern usage
 pub struct EventBusPatternDetector {
@@ -63,7 +63,7 @@ impl EventBusPatternDetector {
     }
 
     /// Check if declaration has EventBus annotations
-    fn has_eventbus_annotation(&self, decl: &crate::graph::Declaration) -> bool {
+    fn has_eventbus_annotation(&self, decl: &Declaration) -> bool {
         for annotation in &decl.annotations {
             for pattern in &self.eventbus_annotations {
                 if annotation.contains(pattern) {

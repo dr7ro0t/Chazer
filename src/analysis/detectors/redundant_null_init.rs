@@ -31,7 +31,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph, Language};
+use crate::graph::{Declaration, DeclarationKind, Graph, Language};
 
 /// Detector for redundant null initialization
 pub struct RedundantNullInitDetector {
@@ -56,7 +56,7 @@ impl RedundantNullInitDetector {
     /// Check if a declaration has redundant null initialization
     /// This requires checking the source text, which we simulate through
     /// declaration metadata
-    fn is_redundant_null_init(&self, decl: &crate::graph::Declaration) -> bool {
+    fn is_redundant_null_init(&self, decl: &Declaration) -> bool {
         // Must be a property or field
         if !matches!(
             decl.kind,

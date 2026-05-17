@@ -25,7 +25,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph};
+use crate::graph::{Declaration, DeclarationKind, Graph};
 
 /// Detector for memory leak risks in Android code
 pub struct MemoryLeakRiskDetector {
@@ -60,12 +60,12 @@ impl MemoryLeakRiskDetector {
     }
 
     /// Check if declaration is in a static context (object, companion object)
-    fn is_static_context(decl: &crate::graph::Declaration) -> bool {
+    fn is_static_context(decl: &Declaration) -> bool {
         decl.is_static || decl.modifiers.iter().any(|m| m == "static")
     }
 
     /// Check if parent is a Kotlin object or companion object
-    fn is_in_object_or_companion(&self, decl: &crate::graph::Declaration, graph: &Graph) -> bool {
+    fn is_in_object_or_companion(&self, decl: &Declaration, graph: &Graph) -> bool {
         if let Some(ref parent_id) = decl.parent
             && let Some(parent) = graph.get_declaration(parent_id)
         {

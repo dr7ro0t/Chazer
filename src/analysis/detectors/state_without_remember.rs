@@ -32,7 +32,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph, Language};
+use crate::graph::{Declaration, DeclarationKind, Graph, Language};
 
 /// Detector for state without remember in Compose
 pub struct StateWithoutRememberDetector {

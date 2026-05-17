@@ -33,7 +33,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph};
+use crate::graph::{Declaration, DeclarationKind, Graph};
 
 /// Detector for chained collection operations without asSequence()
 pub struct CollectionWithoutSequenceDetector {
@@ -86,7 +86,7 @@ impl CollectionWithoutSequenceDetector {
     }
 
     /// Check if method has annotations suggesting data processing
-    fn has_data_processing_annotations(decl: &crate::graph::Declaration) -> bool {
+    fn has_data_processing_annotations(decl: &Declaration) -> bool {
         decl.annotations.iter().any(|a| {
             let lower = a.to_lowercase();
             lower.contains("query") || lower.contains("transform")

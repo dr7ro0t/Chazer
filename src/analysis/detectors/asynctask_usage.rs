@@ -29,7 +29,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph, Language};
+use crate::graph::{Declaration, DeclarationKind, Graph, Language};
 
 /// Detector for AsyncTask usage
 pub struct AsyncTaskUsageDetector;
@@ -40,7 +40,7 @@ impl AsyncTaskUsageDetector {
     }
 
     /// Check if class extends AsyncTask
-    fn extends_asynctask(decl: &crate::graph::Declaration) -> bool {
+    fn extends_asynctask(decl: &Declaration) -> bool {
         decl.super_types
             .iter()
             .any(|s| s.contains("AsyncTask"))

@@ -25,7 +25,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph, ReferenceKind};
+use crate::graph::{Declaration, DeclarationKind, Graph, ReferenceKind};
 use std::collections::HashSet;
 
 /// Detector for unused sealed class/interface variants

@@ -25,7 +25,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph, Visibility};
+use crate::graph::{Declaration, DeclarationKind, Graph, Visibility};
 
 /// Detector for write-only variables (assigned but never read)
 pub struct WriteOnlyDetector {

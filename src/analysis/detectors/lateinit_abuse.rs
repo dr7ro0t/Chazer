@@ -33,7 +33,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationId, DeclarationKind, Graph};
+use crate::graph::{Declaration, DeclarationId, DeclarationKind, Graph};
 use std::collections::HashMap;
 
 /// Detector for excessive lateinit usage
@@ -55,12 +55,12 @@ impl LateinitAbuseDetector {
     }
 
     /// Check if a property is marked as lateinit
-    fn is_lateinit(decl: &crate::graph::Declaration) -> bool {
+    fn is_lateinit(decl: &Declaration) -> bool {
         decl.modifiers.iter().any(|m| m == "lateinit")
     }
 
     /// Check if a property has @Inject annotation (acceptable lateinit usage)
-    fn has_inject_annotation(decl: &crate::graph::Declaration) -> bool {
+    fn has_inject_annotation(decl: &Declaration) -> bool {
         decl.annotations
             .iter()
             .any(|a| a.contains("Inject") || a.contains("Autowired"))
@@ -78,7 +78,7 @@ impl Detector for LateinitAbuseDetector {
         let mut issues: Vec<DeadCode> = Vec::new();
 
         // Group lateinit properties by their parent class
-        let mut class_lateinit_count: HashMap<&DeclarationId, Vec<&crate::graph::Declaration>> =
+        let mut class_lateinit_count: HashMap<&DeclarationId, Vec<&Declaration>> =
             HashMap::new();
 
         // Find all lateinit properties

@@ -29,7 +29,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph};
+use crate::graph::{Declaration, DeclarationKind, Graph};
 use std::collections::HashMap;
 
 /// Detector for deep inheritance chains
@@ -86,7 +86,7 @@ impl DeepInheritanceDetector {
     }
 
     /// Calculate inheritance depth for a class
-    fn calculate_depth(&self, decl: &crate::graph::Declaration, graph: &Graph) -> usize {
+    fn calculate_depth(&self, decl: &Declaration, graph: &Graph) -> usize {
         let mut depth = 0;
 
         // Count super_types that are in the codebase (not framework classes)

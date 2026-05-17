@@ -31,7 +31,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph};
+use crate::graph::{Declaration, DeclarationKind, Graph};
 
 /// Detector for redundant method overrides
 pub struct RedundantOverrideDetector {
@@ -51,12 +51,12 @@ impl RedundantOverrideDetector {
     }
 
     /// Check if a declaration is an override
-    fn is_override(&self, decl: &crate::graph::Declaration) -> bool {
+    fn is_override(&self, decl: &Declaration) -> bool {
         decl.modifiers.iter().any(|m| m == "override")
     }
 
     /// Check if this override should be skipped due to annotations
-    fn has_skip_annotation(&self, decl: &crate::graph::Declaration) -> bool {
+    fn has_skip_annotation(&self, decl: &Declaration) -> bool {
         for annotation in &decl.annotations {
             for skip in &self.skip_annotations {
                 if annotation.contains(skip) {
@@ -73,7 +73,7 @@ impl RedundantOverrideDetector {
     /// For now, we'll use heuristics based on what we can detect:
     /// - Methods with no references made FROM them (no internal calls except super)
     /// - This is a conservative approximation
-    fn is_redundant_override(&self, decl: &crate::graph::Declaration, graph: &Graph) -> bool {
+    fn is_redundant_override(&self, decl: &Declaration, graph: &Graph) -> bool {
         // Skip if has annotations that suggest it's intentional
         if self.has_skip_annotation(decl) {
             return false;

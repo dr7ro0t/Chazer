@@ -24,7 +24,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph, Language};
+use crate::graph::{Declaration, DeclarationKind, Graph, Language};
 
 /// Detector for nullability anti-patterns
 pub struct NullabilityOverloadDetector {
@@ -50,7 +50,7 @@ impl NullabilityOverloadDetector {
     }
 
     /// Check if method is large enough to potentially have null handling issues
-    fn is_suspicious_size(decl: &crate::graph::Declaration, min_bytes: usize) -> bool {
+    fn is_suspicious_size(decl: &Declaration, min_bytes: usize) -> bool {
         let byte_size = decl
             .location
             .end_byte

@@ -20,6 +20,7 @@ use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
 use crate::graph::{DeclarationKind, Graph};
 use std::collections::{HashMap, HashSet};
+use std::path::Path;
 
 /// Detector for duplicate import statements
 pub struct DuplicateImportDetector;
@@ -41,7 +42,7 @@ impl Detector for DuplicateImportDetector {
         let mut issues = Vec::new();
 
         // Group imports by file
-        let mut imports_by_file: HashMap<&std::path::Path, Vec<_>> = HashMap::new();
+        let mut imports_by_file: HashMap<&Path, Vec<_>> = HashMap::new();
 
         for decl in graph.declarations() {
             if decl.kind == DeclarationKind::Import {

@@ -34,7 +34,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph, Visibility};
+use crate::graph::{Declaration, DeclarationKind, Graph, Visibility};
 
 /// Detector for publicly exposed mutable state
 pub struct MutableStateExposedDetector {
@@ -66,7 +66,7 @@ impl MutableStateExposedDetector {
     }
 
     /// Check if property is in a ViewModel class
-    fn is_in_viewmodel(decl: &crate::graph::Declaration, graph: &Graph) -> bool {
+    fn is_in_viewmodel(decl: &Declaration, graph: &Graph) -> bool {
         if let Some(ref parent_id) = decl.parent
             && let Some(parent) = graph.get_declaration(parent_id)
         {

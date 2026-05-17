@@ -34,7 +34,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph};
+use crate::graph::{Declaration, DeclarationKind, Graph};
 
 /// Detector for deeply nested callbacks
 pub struct NestedCallbackDetector {
@@ -61,7 +61,7 @@ impl NestedCallbackDetector {
     }
 
     /// Check if method is large enough to potentially have nested callbacks
-    fn is_large_method(decl: &crate::graph::Declaration, min_bytes: usize) -> bool {
+    fn is_large_method(decl: &Declaration, min_bytes: usize) -> bool {
         let byte_size = decl
             .location
             .end_byte

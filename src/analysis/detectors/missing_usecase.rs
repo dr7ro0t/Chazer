@@ -31,7 +31,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph};
+use crate::graph::{Declaration, DeclarationKind, Graph};
 
 /// Detector for missing domain layer (UseCase/Interactor)
 pub struct MissingUseCaseDetector {
@@ -54,7 +54,7 @@ impl MissingUseCaseDetector {
     }
 
     /// Check if class is a ViewModel
-    fn is_viewmodel_class(decl: &crate::graph::Declaration) -> bool {
+    fn is_viewmodel_class(decl: &Declaration) -> bool {
         let name_lower = decl.name.to_lowercase();
         name_lower.contains("viewmodel")
             || decl

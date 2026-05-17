@@ -29,7 +29,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph, Language};
+use crate::graph::{Declaration, DeclarationKind, Graph, Language};
 
 /// Detector for excessive reflection usage
 pub struct ReflectionOveruseDetector {
@@ -56,7 +56,7 @@ impl ReflectionOveruseDetector {
     }
 
     /// Check if in test file (reflection in tests is OK)
-    fn is_test_file(decl: &crate::graph::Declaration) -> bool {
+    fn is_test_file(decl: &Declaration) -> bool {
         let file_path = decl.location.file.to_string_lossy().to_lowercase();
         file_path.contains("test")
     }

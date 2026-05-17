@@ -39,7 +39,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph, Language};
+use crate::graph::{Declaration, DeclarationKind, Graph, Language};
 
 /// Detector for business logic in composables
 pub struct BusinessLogicInComposableDetector {
@@ -55,7 +55,7 @@ impl BusinessLogicInComposableDetector {
     }
 
     /// Check if function is a Composable
-    fn is_composable(decl: &crate::graph::Declaration) -> bool {
+    fn is_composable(decl: &Declaration) -> bool {
         decl.annotations
             .iter()
             .any(|a| a.contains("Composable") || a == "Composable")

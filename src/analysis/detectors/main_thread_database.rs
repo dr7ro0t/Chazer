@@ -25,7 +25,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph, Language};
+use crate::graph::{Declaration, DeclarationKind, Graph, Language};
 
 /// Detector for main thread database operations
 pub struct MainThreadDatabaseDetector {
@@ -57,7 +57,7 @@ impl MainThreadDatabaseDetector {
     }
 
     /// Check if method is a DAO method (non-suspend = blocking)
-    fn is_dao_method(decl: &crate::graph::Declaration, graph: &Graph) -> bool {
+    fn is_dao_method(decl: &Declaration, graph: &Graph) -> bool {
         if let Some(ref parent_id) = decl.parent
             && let Some(parent) = graph.get_declaration(parent_id)
         {
@@ -71,7 +71,7 @@ impl MainThreadDatabaseDetector {
     }
 
     /// Check if method has suspend modifier (safe)
-    fn is_suspend_function(decl: &crate::graph::Declaration) -> bool {
+    fn is_suspend_function(decl: &Declaration) -> bool {
         decl.modifiers.iter().any(|m| m == "suspend")
     }
 }

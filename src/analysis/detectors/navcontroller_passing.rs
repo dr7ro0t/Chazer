@@ -41,7 +41,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph, Language};
+use crate::graph::{Declaration, DeclarationKind, Graph, Language};
 
 /// Detector for NavController passed to children
 pub struct NavControllerPassingDetector;
@@ -52,7 +52,7 @@ impl NavControllerPassingDetector {
     }
 
     /// Check if function is a Composable
-    fn is_composable(decl: &crate::graph::Declaration) -> bool {
+    fn is_composable(decl: &Declaration) -> bool {
         decl.annotations
             .iter()
             .any(|a| a.contains("Composable") || a == "Composable")

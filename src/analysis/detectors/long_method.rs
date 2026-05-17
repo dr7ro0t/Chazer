@@ -28,7 +28,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph};
+use crate::graph::{Declaration, DeclarationKind, Graph};
 
 /// Detector for methods that are too long
 pub struct LongMethodDetector {
@@ -49,7 +49,7 @@ impl LongMethodDetector {
     }
 
     /// Calculate approximate line count from byte range
-    fn estimate_lines(decl: &crate::graph::Declaration) -> usize {
+    fn estimate_lines(decl: &Declaration) -> usize {
         let byte_range = decl
             .location
             .end_byte

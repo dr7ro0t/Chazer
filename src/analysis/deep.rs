@@ -7,9 +7,12 @@
 // 4. Uses heuristics for common dead code patterns
 
 use super::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{Declaration, DeclarationId, DeclarationKind, Graph, Language, ReferenceKind};
+use crate::graph::{
+    Declaration, DeclarationId, DeclarationKind, Graph, Language, ReferenceKind, Visibility,
+};
 use petgraph::visit::Dfs;
 use rayon::prelude::*;
+use std::cmp::Ordering;
 use std::collections::HashSet;
 use tracing::info;
 
@@ -80,7 +83,7 @@ impl DeepAnalyzer {
                 .location
                 .file
                 .cmp(&b.declaration.location.file);
-            if file_cmp != std::cmp::Ordering::Equal {
+            if file_cmp != Ordering::Equal {
                 return file_cmp;
             }
             a.declaration
@@ -553,7 +556,7 @@ impl DeepAnalyzer {
             }
 
             // Skip public API (might be used externally)
-            if decl.visibility == crate::graph::Visibility::Public {
+            if decl.visibility == Visibility::Public {
                 // But still report if it's not referenced at all
                 if graph.is_referenced(&decl.id) {
                     continue;

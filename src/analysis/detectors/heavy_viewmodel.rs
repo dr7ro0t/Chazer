@@ -34,7 +34,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph};
+use crate::graph::{Declaration, DeclarationId, DeclarationKind, Graph};
 use std::collections::HashMap;
 
 /// Detector for ViewModels with too many dependencies
@@ -79,7 +79,7 @@ impl HeavyViewModelDetector {
     }
 
     /// Check if a class is a ViewModel
-    fn is_viewmodel(&self, decl: &crate::graph::Declaration) -> bool {
+    fn is_viewmodel(&self, decl: &Declaration) -> bool {
         decl.super_types
             .iter()
             .any(|s| s.contains("ViewModel") || s.contains("AndroidViewModel"))
@@ -104,7 +104,7 @@ impl Detector for HeavyViewModelDetector {
         let mut issues: Vec<DeadCode> = Vec::new();
 
         // Group declarations by parent to count methods per ViewModel
-        let mut viewmodel_children: HashMap<&crate::graph::DeclarationId, Vec<&crate::graph::Declaration>> =
+        let mut viewmodel_children: HashMap<&DeclarationId, Vec<&Declaration>> =
             HashMap::new();
 
         // First pass: identify ViewModels and collect their children

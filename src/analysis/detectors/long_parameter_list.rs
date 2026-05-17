@@ -31,7 +31,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph};
+use crate::graph::{Declaration, DeclarationKind, Graph};
 
 /// Detector for functions with too many parameters
 pub struct LongParameterListDetector {
@@ -52,21 +52,21 @@ impl LongParameterListDetector {
     }
 
     /// Check if method has @Inject annotation (DI is OK)
-    fn has_inject_annotation(decl: &crate::graph::Declaration) -> bool {
+    fn has_inject_annotation(decl: &Declaration) -> bool {
         decl.annotations
             .iter()
             .any(|a| a.to_lowercase().contains("inject"))
     }
 
     /// Check if it's a constructor
-    fn is_constructor(decl: &crate::graph::Declaration) -> bool {
+    fn is_constructor(decl: &Declaration) -> bool {
         matches!(decl.kind, DeclarationKind::Constructor)
             || decl.name == "init"
             || decl.name.starts_with("<init>")
     }
 
     /// Count parameters by looking at child declarations
-    fn count_parameters(decl: &crate::graph::Declaration, graph: &Graph) -> usize {
+    fn count_parameters(decl: &Declaration, graph: &Graph) -> usize {
         graph
             .get_children(&decl.id)
             .iter()

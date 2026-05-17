@@ -31,7 +31,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph};
+use crate::graph::{Declaration, DeclarationKind, Graph};
 
 /// Detector for unclosed resources
 pub struct UnclosedResourceDetector {
@@ -67,7 +67,7 @@ impl UnclosedResourceDetector {
     }
 
     /// Check if method is large enough to potentially have resource issues
-    fn is_large_method(decl: &crate::graph::Declaration) -> bool {
+    fn is_large_method(decl: &Declaration) -> bool {
         let byte_size = decl
             .location
             .end_byte

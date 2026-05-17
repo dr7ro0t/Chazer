@@ -28,7 +28,7 @@
 
 use super::Detector;
 use crate::analysis::{Confidence, DeadCode, DeadCodeIssue};
-use crate::graph::{DeclarationKind, Graph};
+use crate::graph::{Declaration, DeclarationKind, Graph};
 
 /// Detector for duplicated string literals
 pub struct StringLiteralDuplicationDetector {
@@ -57,7 +57,7 @@ impl StringLiteralDuplicationDetector {
     }
 
     /// Check if class has a companion object (where constants should be)
-    fn has_companion_object(decl: &crate::graph::Declaration, graph: &Graph) -> bool {
+    fn has_companion_object(decl: &Declaration, graph: &Graph) -> bool {
         graph
             .get_children(&decl.id)
             .iter()
