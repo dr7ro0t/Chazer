@@ -119,7 +119,7 @@ runs:
           BINARY_NAME="chazer-${TARGET}"
         fi
 
-        DOWNLOAD_URL="https://github.com/dr7ro0t/Chazer/releases/download/v${VERSION}/${BINARY_NAME}"
+        DOWNLOAD_URL="https://github.com/dr7ro0t/Chazer/releases/download/${VERSION}/${BINARY_NAME}"
 
         echo "Downloading Chazer v${VERSION} for ${TARGET}..."
         echo "URL: ${DOWNLOAD_URL}"
