@@ -55,7 +55,7 @@ impl SummaryReporter {
 
     pub fn report(&self, dead_code: &[DeadCode]) {
         println!();
-        println!("{}", "SearchDeadCode Analysis Summary".cyan().bold());
+        println!("{}", "Chazer Analysis Summary".cyan().bold());
         println!("{}", BoxChars::heavy_line(50));
         println!();
 

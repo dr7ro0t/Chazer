@@ -14,13 +14,13 @@
   <circle cx="30" cy="25" r="6" fill="#f7768e"/>
   <circle cx="50" cy="25" r="6" fill="#e0af68"/>
   <circle cx="70" cy="25" r="6" fill="#9ece6a"/>
-  <text x="300" y="29" font-family="monospace" font-size="12" fill="#a9b1d6" text-anchor="middle">Terminal — searchdeadcode</text>
+  <text x="300" y="29" font-family="monospace" font-size="12" fill="#a9b1d6" text-anchor="middle">Terminal — chazer</text>
 
   <!-- Terminal content -->
   <text x="20" y="65" font-family="monospace" font-size="13" fill="#7dcfff">$</text>
-  <text x="35" y="65" font-family="monospace" font-size="13" fill="#c0caf5">searchdeadcode ./my-android-app</text>
+  <text x="35" y="65" font-family="monospace" font-size="13" fill="#c0caf5">chazer ./my-android-app</text>
 
-  <text x="20" y="95" font-family="monospace" font-size="12" fill="#9ece6a">SearchDeadCode v0.4.0</text>
+  <text x="20" y="95" font-family="monospace" font-size="12" fill="#9ece6a">Chazer v0.4.0</text>
   <text x="20" y="115" font-family="monospace" font-size="12" fill="#a9b1d6">Discovering files...</text>
   <text x="20" y="135" font-family="monospace" font-size="12" fill="#a9b1d6">Found 247 files to analyze</text>
   <text x="20" y="155" font-family="monospace" font-size="12" fill="#a9b1d6">Running reachability analysis...</text>

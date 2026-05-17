@@ -45,7 +45,7 @@ terminalizer render demo -o assets/demo.gif
 
 ```bash
 # Just run this in the repo root:
-searchdeadcode ./tests/fixtures/android --min-confidence high
+chazer ./tests/fixtures/android --min-confidence high
 ```
 
 The output should show the colorful terminal display with confidence indicators.

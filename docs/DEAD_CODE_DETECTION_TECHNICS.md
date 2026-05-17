@@ -9,12 +9,12 @@ According to systematic literature reviews, there are two main approaches for au
 
 | Approach                   | Description                                                                  | Tools                                  |
 |----------------------------|------------------------------------------------------------------------------|----------------------------------------|
-| **Accessibility Analysis** | Build dependency graph, traverse from entry points, mark unreachable as dead | Periphery, SearchDeadCode, R8/ProGuard |
+| **Accessibility Analysis** | Build dependency graph, traverse from entry points, mark unreachable as dead | Periphery, Chazer, R8/ProGuard |
 | **Data Flow Analysis**     | Track how data flows through program, identify unused computations           | Compilers (DCE), Static analyzers      |
 
 ### 1. Graph-Based Reachability Analysis
 
-This is the approach used by SearchDeadCode, inspired by [Periphery](https://github.com/peripheryapp/periphery):
+This is the approach used by Chazer, inspired by [Periphery](https://github.com/peripheryapp/periphery):
 
 ```
 Entry Points → Build Dependency Graph → DFS/BFS Traversal → Mark Reachable → Report Unreachable
@@ -184,7 +184,7 @@ For large codebases, incremental analysis is essential:
 4. **Configuration**: Code referenced in XML, properties files, etc.
 5. **Dynamic Languages**: Less static structure = harder analysis
 
-### Future Improvements for SearchDeadCode
+### Future Improvements for Chazer
 
 Based on this research, potential enhancements include:
 

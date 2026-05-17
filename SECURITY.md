@@ -9,12 +9,12 @@
 
 ## Reporting a Vulnerability
 
-We take security seriously. If you discover a security vulnerability in SearchDeadCode, please report it responsibly.
+We take security seriously. If you discover a security vulnerability in Chazer, please report it responsibly.
 
 ### How to Report
 
 1. **Do NOT open a public GitHub issue** for security vulnerabilities
-2. Email the maintainer directly or use [GitHub's private vulnerability reporting](https://github.com/dr7ro0t/SearchDeadCode/security/advisories/new)
+2. Email the maintainer directly or use [GitHub's private vulnerability reporting](https://github.com/dr7ro0t/Chazer/security/advisories/new)
 3. Include as much detail as possible:
    - Description of the vulnerability
    - Steps to reproduce
@@ -30,7 +30,7 @@ We take security seriously. If you discover a security vulnerability in SearchDe
 
 ### Security Best Practices
 
-When using SearchDeadCode:
+When using Chazer:
 
 - Always use the latest version
 - Verify checksums of downloaded binaries
@@ -55,10 +55,10 @@ We regularly audit our dependencies using:
 
 ## Security-Related Configuration
 
-SearchDeadCode is a static analysis tool that:
+Chazer is a static analysis tool that:
 - Only reads files (never modifies unless explicitly requested with `--remove`)
 - Does not make network connections
 - Does not execute analyzed code
 - Respects `.gitignore` patterns
 
-Thank you for helping keep SearchDeadCode secure!
+Thank you for helping keep Chazer secure!

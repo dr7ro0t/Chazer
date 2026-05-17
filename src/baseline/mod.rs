@@ -1,4 +1,4 @@
-//! Baseline support for SearchDeadCode
+//! Baseline support for Chazer
 //!
 //! This module provides functionality for creating and using baselines
 //! to ignore existing dead code issues and only report new ones.

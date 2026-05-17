@@ -21,24 +21,24 @@ jobs:
         include:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            artifact_name: searchdeadcode
-            asset_name: searchdeadcode-linux-x86_64
+            artifact_name: chazer
+            asset_name: chazer-linux-x86_64
           - os: ubuntu-latest
             target: aarch64-unknown-linux-gnu
-            artifact_name: searchdeadcode
-            asset_name: searchdeadcode-linux-aarch64
+            artifact_name: chazer
+            asset_name: chazer-linux-aarch64
           - os: macos-latest
             target: x86_64-apple-darwin
-            artifact_name: searchdeadcode
-            asset_name: searchdeadcode-macos-x86_64
+            artifact_name: chazer
+            asset_name: chazer-macos-x86_64
           - os: macos-latest
             target: aarch64-apple-darwin
-            artifact_name: searchdeadcode
-            asset_name: searchdeadcode-macos-aarch64
+            artifact_name: chazer
+            asset_name: chazer-macos-aarch64
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-            artifact_name: searchdeadcode.exe
-            asset_name: searchdeadcode-windows-x86_64.exe
+            artifact_name: chazer.exe
+            asset_name: chazer-windows-x86_64.exe
 
     steps:
       - uses: actions/checkout@v6
@@ -100,7 +100,7 @@ jobs:
       - name: Generate SBOM attestation
         uses: actions/attest-sbom@v3
         with:
-          subject-name: searchdeadcode
+          subject-name: chazer
           subject-digest: sha256:${{ github.sha }}
           sbom-path: sbom.cdx.json
 
@@ -134,7 +134,7 @@ jobs:
           mkdir -p release
           find artifacts -type f -exec cp {} release/ \;
           cd release
-          for f in searchdeadcode-*; do
+          for f in chazer-*; do
             if [[ "$f" != *.exe ]]; then
               chmod +x "$f"
             fi
@@ -145,7 +145,7 @@ jobs:
       - name: Sign release artifacts with cosign
         run: |
           cd release
-          for f in searchdeadcode-*; do
+          for f in chazer-*; do
             if [[ "$f" != *.sha256 && "$f" != *.sig && "$f" != *.pem ]]; then
               echo "Signing $f..."
               cosign sign-blob --yes --output-signature "$f.sig" --output-certificate "$f.pem" "$f"

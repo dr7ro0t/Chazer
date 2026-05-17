@@ -1,4 +1,4 @@
-# SearchDeadCode Testing Guide
+# Chazer Testing Guide
 
 ## Running Tests
 

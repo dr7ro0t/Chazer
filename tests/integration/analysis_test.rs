@@ -1,13 +1,11 @@
-//! Integration tests for SearchDeadCode analysis
+//! Integration tests for Chazer analysis
 //!
 //! These tests verify the complete analysis pipeline against test fixtures.
 
-use searchdeadcode::analysis::detectors::{
-    Detector, UnusedSealedVariantDetector, WriteOnlyDetector,
-};
-use searchdeadcode::analysis::ReachabilityAnalyzer;
-use searchdeadcode::discovery::{FileType, SourceFile};
-use searchdeadcode::graph::GraphBuilder;
+use chazer::analysis::ReachabilityAnalyzer;
+use chazer::analysis::detectors::{Detector, UnusedSealedVariantDetector, WriteOnlyDetector};
+use chazer::discovery::{FileType, SourceFile};
+use chazer::graph::GraphBuilder;
 use std::collections::HashSet;
 use std::path::PathBuf;
 
@@ -17,7 +15,7 @@ fn fixtures_path() -> PathBuf {
 }
 
 /// Build a graph from a single Kotlin file
-fn build_graph_from_file(path: &PathBuf) -> searchdeadcode::graph::Graph {
+fn build_graph_from_file(path: &PathBuf) -> chazer::graph::Graph {
     let file_type = if path.to_string_lossy().ends_with(".kt") {
         FileType::Kotlin
     } else if path.to_string_lossy().ends_with(".java") {

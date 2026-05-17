@@ -1,4 +1,4 @@
-//! Incremental analysis cache for SearchDeadCode
+//! Incremental analysis cache for Chazer
 //!
 //! This module provides caching of parsed AST data and analysis results
 //! to avoid re-parsing unchanged files.
@@ -189,7 +189,7 @@ impl AnalysisCache {
 
     /// Get the default cache path for a project
     pub fn default_cache_path(project_root: &Path) -> PathBuf {
-        project_root.join(".searchdeadcode-cache.json")
+        project_root.join(".chazer-cache.json")
     }
 
     /// Check if a file needs re-parsing

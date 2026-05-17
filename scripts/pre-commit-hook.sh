@@ -1,5 +1,5 @@
 #!/bin/bash
-# SearchDeadCode Pre-Commit Hook
+# Chazer Pre-Commit Hook
 # Blocks commits that introduce new dead code
 #
 # Installation:
@@ -10,8 +10,8 @@
 #   Add to .pre-commit-config.yaml:
 #   - repo: local
 #     hooks:
-#       - id: searchdeadcode
-#         name: SearchDeadCode
+#       - id: chazer
+#         name: Chazer
 #         entry: scripts/pre-commit-hook.sh
 #         language: script
 #         pass_filenames: false
@@ -19,9 +19,9 @@
 set -e
 
 # Configuration
-MIN_CONFIDENCE="${SEARCHDEADCODE_MIN_CONFIDENCE:-high}"
-FAIL_ON_FINDINGS="${SEARCHDEADCODE_FAIL_ON_FINDINGS:-true}"
-BASELINE_FILE="${SEARCHDEADCODE_BASELINE:-.searchdeadcode-baseline.json}"
+MIN_CONFIDENCE="${CHAZER_MIN_CONFIDENCE:-high}"
+FAIL_ON_FINDINGS="${CHAZER_FAIL_ON_FINDINGS:-true}"
+BASELINE_FILE="${CHAZER_BASELINE:-.chazer-baseline.json}"
 
 # Colors
 RED='\033[0;31m'
@@ -29,18 +29,18 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-echo -e "${YELLOW}Running SearchDeadCode...${NC}"
+echo -e "${YELLOW}Running Chazer...${NC}"
 
-# Check if searchdeadcode is installed
-if ! command -v searchdeadcode &> /dev/null; then
-    echo -e "${RED}Error: searchdeadcode is not installed${NC}"
-    echo "Install it with: brew tap dr7ro0t/tap && brew install searchdeadcode"
-    echo "Or: cargo install searchdeadcode"
+# Check if chazer is installed
+if ! command -v chazer &> /dev/null; then
+    echo -e "${RED}Error: chazer is not installed${NC}"
+    echo "Install it with: brew tap dr7ro0t/tap && brew install chazer"
+    echo "Or: cargo install chazer"
     exit 1
 fi
 
 # Build command
-CMD="searchdeadcode . --min-confidence $MIN_CONFIDENCE --format json"
+CMD="chazer . --min-confidence $MIN_CONFIDENCE --format json"
 
 # Use baseline if it exists
 if [ -f "$BASELINE_FILE" ]; then
@@ -63,17 +63,17 @@ if [ "$FINDINGS" -gt 0 ]; then
 
     echo ""
     echo -e "${YELLOW}To see full details, run:${NC}"
-    echo "  searchdeadcode . --min-confidence $MIN_CONFIDENCE"
+    echo "  chazer . --min-confidence $MIN_CONFIDENCE"
     echo ""
     echo -e "${YELLOW}To generate a baseline (ignore existing issues):${NC}"
-    echo "  searchdeadcode . --generate-baseline $BASELINE_FILE"
+    echo "  chazer . --generate-baseline $BASELINE_FILE"
     echo ""
 
     if [ "$FAIL_ON_FINDINGS" = "true" ]; then
         echo -e "${RED}Commit blocked. Fix the issues above or update the baseline.${NC}"
         exit 1
     else
-        echo -e "${YELLOW}Warning: Dead code found but SEARCHDEADCODE_FAIL_ON_FINDINGS=false${NC}"
+        echo -e "${YELLOW}Warning: Dead code found but CHAZER_FAIL_ON_FINDINGS=false${NC}"
     fi
 else
     echo -e "${GREEN}No new dead code found.${NC}"

@@ -1,10 +1,10 @@
-# SearchDeadCode Detectors
+# Chazer Detectors
 
-This document provides a comprehensive reference for all detectors available in SearchDeadCode.
+This document provides a comprehensive reference for all detectors available in Chazer.
 
 ## Overview
 
-SearchDeadCode includes **50 detectors** organized into two categories:
+Chazer includes **50 detectors** organized into two categories:
 
 - **Dead Code Detectors (DC001-DC016)**: Find unused, unreachable, or redundant code
 - **Anti-Pattern Detectors (AP001-AP034)**: Find code smells and architectural issues
@@ -13,17 +13,17 @@ SearchDeadCode includes **50 detectors** organized into two categories:
 
 ```bash
 # Run all anti-pattern detectors
-searchdeadcode --anti-patterns /path/to/project
+chazer --anti-patterns /path/to/project
 
 # Run specific detector groups
-searchdeadcode --kotlin-patterns /path/to/project
-searchdeadcode --android-patterns /path/to/project
-searchdeadcode --compose-patterns /path/to/project
-searchdeadcode --performance-patterns /path/to/project
-searchdeadcode --architecture-patterns /path/to/project
+chazer --kotlin-patterns /path/to/project
+chazer --android-patterns /path/to/project
+chazer --compose-patterns /path/to/project
+chazer --performance-patterns /path/to/project
+chazer --architecture-patterns /path/to/project
 
 # Combine with dead code detection
-searchdeadcode --deep --anti-patterns /path/to/project
+chazer --deep --anti-patterns /path/to/project
 ```
 
 ---

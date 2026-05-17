@@ -1,6 +1,6 @@
 # Social Preview Image Guide
 
-This document explains how to create and set up the social preview image for the SearchDeadCode repository.
+This document explains how to create and set up the social preview image for the Chazer repository.
 
 ## Dimensions
 
@@ -13,7 +13,7 @@ GitHub recommends:
 ## Current Design Elements
 
 The social preview should include:
-- SearchDeadCode logo
+- Chazer logo
 - Project name and tagline
 - Key visual elements (code snippets, terminal output, etc.)
 - Brand colors
@@ -32,12 +32,12 @@ The social preview should include:
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                                                                 │
-│     [Logo]  SearchDeadCode                                      │
+│     [Logo]  Chazer                                      │
 │                                                                 │
 │     Find and eliminate dead code                                │
 │     in Android projects                                         │
 │                                                                 │
-│     $ searchdeadcode ./my-app                                   │
+│     $ chazer ./my-app                                   │
 │     Found 12 dead code issues ✓                                 │
 │                                                                 │
 │     ⚡ Fast  •  🔒 Safe Delete  •  🎯 Kotlin-first             │

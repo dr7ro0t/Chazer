@@ -28,7 +28,7 @@ Enter
 Sleep 1s
 
 # Run the analysis
-Type "searchdeadcode ./my-android-app --min-confidence high"
+Type "chazer ./my-android-app --min-confidence high"
 Enter
 Sleep 3s
 
@@ -44,7 +44,7 @@ Type "# Preview what would be deleted"
 Enter
 Sleep 500ms
 
-Type "searchdeadcode ./my-android-app --delete --dry-run"
+Type "chazer ./my-android-app --delete --dry-run"
 Enter
 Sleep 3s
 

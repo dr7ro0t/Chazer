@@ -93,7 +93,7 @@
 ## Project Structure
 
 ```
-searchdeadcode/
+chazer/
 ├── Cargo.toml
 ├── src/
 │   ├── main.rs                  # CLI entry point

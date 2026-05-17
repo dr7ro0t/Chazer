@@ -1,4 +1,4 @@
-//! SearchDeadCode - Fast dead code detection for Android (Kotlin/Java)
+//! Chazer - Fast dead code detection for Android (Kotlin/Java)
 //!
 //! This library provides static analysis capabilities to detect unused code
 //! in Android projects written in Kotlin and Java.
@@ -27,7 +27,7 @@ pub use analysis::{
     Confidence, DeadCode, EntryPointDetector, HybridAnalyzer, ReachabilityAnalyzer,
 };
 pub use config::Config;
-pub use coverage::{parse_coverage_file, parse_coverage_files, CoverageData, CoverageParser};
+pub use coverage::{CoverageData, CoverageParser, parse_coverage_file, parse_coverage_files};
 pub use discovery::FileFinder;
 pub use graph::{Declaration, DeclarationKind, Graph, Reference};
 pub use proguard::{ProguardUsage, UsageEntryKind};

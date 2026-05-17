@@ -28,7 +28,7 @@ impl UndoScript {
         let mut script = String::new();
 
         script.push_str("#!/bin/bash\n");
-        script.push_str("# SearchDeadCode Undo Script\n");
+        script.push_str("# Chazer Undo Script\n");
         script.push_str("# Generated automatically - run to restore deleted code\n");
         script.push('\n');
         script.push_str("set -e\n");
@@ -42,15 +42,12 @@ impl UndoScript {
             let escaped_contents = contents.replace("'", "'\\''");
 
             script.push_str(&format!("# Restore {}\n", file_path.display()));
-            script.push_str(&format!(
-                "cat > '{}' << 'SEARCHDEADCODE_EOF'\n",
-                escaped_path
-            ));
+            script.push_str(&format!("cat > '{}' << 'CHAZER_EOF'\n", escaped_path));
             script.push_str(&escaped_contents);
             if !escaped_contents.ends_with('\n') {
                 script.push('\n');
             }
-            script.push_str("SEARCHDEADCODE_EOF\n");
+            script.push_str("CHAZER_EOF\n");
             script.push_str(&format!("echo '  Restored: {}'\n", file_path.display()));
             script.push('\n');
         }

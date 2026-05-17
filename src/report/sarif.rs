@@ -209,9 +209,9 @@ impl SarifReport {
             runs: vec![SarifRun {
                 tool: SarifTool {
                     driver: SarifDriver {
-                        name: "searchdeadcode",
+                        name: "chazer",
                         version: env!("CARGO_PKG_VERSION"),
-                        information_uri: "https://github.com/user/searchdeadcode",
+                        information_uri: "https://github.com/user/chazer",
                         rules,
                     },
                 },

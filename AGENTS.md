@@ -21,4 +21,4 @@ Place quick unit tests next to the modules they exercise (`#[cfg(test)]`), and k
 Archived upstream history uses short, imperative subjects (`analyzer: tighten entrypoint scan`) with optional scopes; stay under 72 characters, include a brief body when context or test output matters, and link issues as `#123`. PR descriptions must list the problem, approach, sample CLI output (terminal or JSON), and the checks you ran (`fmt`, `clippy`, `test`, release build). Attach SARIF/JSON snippets whenever reporting or deletion behavior shifts.
 
 ## Configuration & Safety Tips
-Keep `searchdeadcode.yaml` under version control and capture any new `entry_points`, `retain_patterns`, or annotation rules in the same change that relies on them. Changes to deletion flows must include `--delete --dry-run` transcripts plus confirmation that generated restore scripts remain idempotent.
+Keep `chazer.yaml` under version control and capture any new `entry_points`, `retain_patterns`, or annotation rules in the same change that relies on them. Changes to deletion flows must include `--delete --dry-run` transcripts plus confirmation that generated restore scripts remain idempotent.

@@ -1,4 +1,4 @@
-# Output Improvement Plan for SearchDeadCode
+# Output Improvement Plan for Chazer
 
 ## Research Summary
 
@@ -90,7 +90,7 @@ Following [Rust's RFC 1644](https://rust-lang.github.io/rfcs/1644-default-and-ex
      |
    = note: ViewModels outlive Activities/Fragments, causing memory leaks
    = help: Use callbacks, LiveData, or StateFlow instead
-   = docs: https://searchdeadcode.dev/rules/AP017
+   = docs: https://chazer.dev/rules/AP017
 ```
 
 ### 3. Grouped by Rule (`--group-by rule`)
@@ -116,7 +116,7 @@ AP001 - Global mutable state (45 issues)
 
 ### 4. Summary Only (`--summary`)
 ```
-SearchDeadCode Analysis Summary
+Chazer Analysis Summary
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Files analyzed:     6,244

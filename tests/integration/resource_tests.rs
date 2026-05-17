@@ -28,7 +28,7 @@ fn test_unused_resources_integration() {
     fs::write(my_project.join("Dummy.kt"), "package com.example").unwrap();
 
     // Run analyzer on the sub-directory
-    let mut cmd = Command::cargo_bin("searchdeadcode").unwrap();
+    let mut cmd = Command::cargo_bin("chazer").unwrap();
     cmd.arg(&my_project)
         .arg("--unused-resources")
         .arg("--min-confidence")
@@ -70,7 +70,7 @@ fn test_resource_baseline_integration() {
     fs::write(my_project.join("Dummy.kt"), "package com.example").unwrap();
 
     // 1. Generate baseline
-    let mut cmd = Command::cargo_bin("searchdeadcode").unwrap();
+    let mut cmd = Command::cargo_bin("chazer").unwrap();
     cmd.arg(&my_project)
         .arg("--unused-resources")
         .arg("--min-confidence")
@@ -85,7 +85,7 @@ fn test_resource_baseline_integration() {
     assert!(baseline_content.contains("baseline_resource"));
 
     // 2. Run with baseline (should pass)
-    let mut cmd = Command::cargo_bin("searchdeadcode").unwrap();
+    let mut cmd = Command::cargo_bin("chazer").unwrap();
     cmd.arg(&my_project)
         .arg("--unused-resources")
         .arg("--min-confidence")

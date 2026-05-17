@@ -44,7 +44,7 @@ body:
     attributes:
       label: Command Used
       description: The exact command you ran
-      placeholder: "searchdeadcode ./app --min-confidence high"
+      placeholder: "chazer ./app --min-confidence high"
     validations:
       required: true
 
@@ -68,7 +68,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: SearchDeadCode Version
+      label: Chazer Version
       placeholder: "0.4.0"
     validations:
       required: true

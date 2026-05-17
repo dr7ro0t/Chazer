@@ -1,4 +1,4 @@
-//! Comprehensive integration tests for SearchDeadCode
+//! Comprehensive integration tests for Chazer
 //!
 //! This module covers:
 //! - False positive prevention (code that looks dead but isn't)
@@ -8,13 +8,13 @@
 //! - Java language support
 //! - Performance with large files
 
-use searchdeadcode::analysis::detectors::{
+use chazer::analysis::ReachabilityAnalyzer;
+use chazer::analysis::detectors::{
     Detector, RedundantOverrideDetector, UnusedParamDetector, UnusedSealedVariantDetector,
     WriteOnlyDetector,
 };
-use searchdeadcode::analysis::ReachabilityAnalyzer;
-use searchdeadcode::discovery::{FileType, SourceFile};
-use searchdeadcode::graph::GraphBuilder;
+use chazer::discovery::{FileType, SourceFile};
+use chazer::graph::GraphBuilder;
 use std::collections::HashSet;
 use std::path::PathBuf;
 use std::time::Instant;
@@ -25,7 +25,7 @@ fn fixtures_path() -> PathBuf {
 }
 
 /// Build a graph from a Kotlin file
-fn build_kotlin_graph(filename: &str) -> searchdeadcode::graph::Graph {
+fn build_kotlin_graph(filename: &str) -> chazer::graph::Graph {
     let path = fixtures_path().join("kotlin").join(filename);
     if !path.exists() {
         panic!("Fixture not found: {:?}", path);
@@ -39,7 +39,7 @@ fn build_kotlin_graph(filename: &str) -> searchdeadcode::graph::Graph {
 }
 
 /// Build a graph from a Java file
-fn build_java_graph(filename: &str) -> searchdeadcode::graph::Graph {
+fn build_java_graph(filename: &str) -> chazer::graph::Graph {
     let path = fixtures_path().join("java").join(filename);
     if !path.exists() {
         panic!("Fixture not found: {:?}", path);
@@ -53,7 +53,7 @@ fn build_java_graph(filename: &str) -> searchdeadcode::graph::Graph {
 }
 
 /// Build a graph from multiple files
-fn build_multi_file_graph(files: &[(&str, FileType)]) -> searchdeadcode::graph::Graph {
+fn build_multi_file_graph(files: &[(&str, FileType)]) -> chazer::graph::Graph {
     let mut builder = GraphBuilder::new();
     for (filename, file_type) in files {
         let subfolder = match file_type {
@@ -362,7 +362,7 @@ mod edge_case_tests {
         // Look for type aliases
         let type_alias_count = graph
             .declarations()
-            .filter(|d| d.kind == searchdeadcode::graph::DeclarationKind::TypeAlias)
+            .filter(|d| d.kind == chazer::graph::DeclarationKind::TypeAlias)
             .count();
 
         println!("Type aliases found: {}", type_alias_count);
@@ -628,7 +628,7 @@ mod java_tests {
 
         let classes: Vec<_> = graph
             .declarations()
-            .filter(|d| d.kind == searchdeadcode::graph::DeclarationKind::Class)
+            .filter(|d| d.kind == chazer::graph::DeclarationKind::Class)
             .map(|d| d.name.clone())
             .collect();
 
@@ -650,7 +650,7 @@ mod java_tests {
 
         let methods: Vec<_> = graph
             .declarations()
-            .filter(|d| d.kind == searchdeadcode::graph::DeclarationKind::Function)
+            .filter(|d| d.kind == chazer::graph::DeclarationKind::Function)
             .map(|d| d.name.clone())
             .collect();
 
@@ -668,7 +668,7 @@ mod java_tests {
 
         let fields: Vec<_> = graph
             .declarations()
-            .filter(|d| d.kind == searchdeadcode::graph::DeclarationKind::Property)
+            .filter(|d| d.kind == chazer::graph::DeclarationKind::Property)
             .map(|d| d.name.clone())
             .collect();
 
@@ -687,8 +687,8 @@ mod java_tests {
         let enums: Vec<_> = graph
             .declarations()
             .filter(|d| {
-                d.kind == searchdeadcode::graph::DeclarationKind::Enum
-                    || d.kind == searchdeadcode::graph::DeclarationKind::EnumCase
+                d.kind == chazer::graph::DeclarationKind::Enum
+                    || d.kind == chazer::graph::DeclarationKind::EnumCase
             })
             .map(|d| d.name.clone())
             .collect();

@@ -4,49 +4,49 @@
 
 ```bash
 # Analyze current directory
-searchdeadcode .
+chazer .
 
 # Analyze specific Android project
-searchdeadcode ./my-android-app
+chazer ./my-android-app
 
 # Analyze with verbose output
-searchdeadcode ./app --verbose
+chazer ./app --verbose
 
 # Quiet mode (only results)
-searchdeadcode ./app --quiet
+chazer ./app --quiet
 ```
 
 ## Output Formats
 
 ```bash
 # Terminal (default) - colored, grouped output
-searchdeadcode ./app
+chazer ./app
 
 # JSON - for programmatic use
-searchdeadcode ./app --format json --output report.json
+chazer ./app --format json --output report.json
 
 # SARIF - for GitHub Actions / CI integration
-searchdeadcode ./app --format sarif --output report.sarif
+chazer ./app --format sarif --output report.sarif
 ```
 
 ## Hybrid Analysis (Static + Dynamic)
 
-SearchDeadCode supports hybrid analysis by combining static code analysis with runtime coverage data. This significantly increases confidence in dead code findings and reduces false positives.
+Chazer supports hybrid analysis by combining static code analysis with runtime coverage data. This significantly increases confidence in dead code findings and reduces false positives.
 
 ### Using Runtime Coverage
 
 ```bash
 # With JaCoCo coverage from CI tests
-searchdeadcode ./app --coverage build/reports/jacoco/test/jacocoTestReport.xml
+chazer ./app --coverage build/reports/jacoco/test/jacocoTestReport.xml
 
 # With Kover coverage (Kotlin)
-searchdeadcode ./app --coverage build/reports/kover/report.xml
+chazer ./app --coverage build/reports/kover/report.xml
 
 # With LCOV coverage
-searchdeadcode ./app --coverage coverage/lcov.info
+chazer ./app --coverage coverage/lcov.info
 
 # Multiple coverage files (merged)
-searchdeadcode ./app \
+chazer ./app \
   --coverage build/reports/unit-test.xml \
   --coverage build/reports/integration-test.xml
 ```
@@ -64,10 +64,10 @@ Each finding is assigned a confidence level:
 
 ```bash
 # Only show high-confidence and confirmed findings
-searchdeadcode ./app --min-confidence high
+chazer ./app --min-confidence high
 
 # Only show runtime-confirmed findings (safest)
-searchdeadcode ./app --coverage coverage.xml --runtime-only
+chazer ./app --coverage coverage.xml --runtime-only
 ```
 
 ### Runtime-Dead Code Detection
@@ -76,7 +76,7 @@ Find code that passes static analysis but is never executed in practice:
 
 ```bash
 # Include reachable but never-executed code
-searchdeadcode ./app --coverage coverage.xml --include-runtime-dead
+chazer ./app --coverage coverage.xml --include-runtime-dead
 ```
 
 This detects "zombie code" - code that exists in your codebase and appears to be used (passes static analysis) but is never actually executed during test runs.
@@ -99,14 +99,14 @@ Then build your release APK:
 
 The file will be at: `app/build/outputs/mapping/release/usage.txt`
 
-### Using with SearchDeadCode
+### Using with Chazer
 
 ```bash
 # Analyze with ProGuard data
-searchdeadcode ./app --proguard-usage path/to/usage.txt
+chazer ./app --proguard-usage path/to/usage.txt
 
 # Combine with other options
-searchdeadcode ./app \
+chazer ./app \
   --proguard-usage usage.txt \
   --coverage coverage.xml \
   --detect-cycles
@@ -116,7 +116,7 @@ searchdeadcode ./app \
 
 ```bash
 # Full analysis with R8 usage.txt
-./target/release/searchdeadcode /path/to/your/android-project \
+./target/release/chazer /path/to/your/android-project \
   --exclude "**/build/**" \
   --exclude "**/test/**" \
   --exclude "**/Color.kt" \
@@ -180,7 +180,7 @@ Detect mutually dependent dead code - code that only references itself:
 
 ```bash
 # Enable zombie code cycle detection
-searchdeadcode ./app --detect-cycles
+chazer ./app --detect-cycles
 ```
 
 This finds patterns like:
@@ -209,7 +209,7 @@ Detect function parameters that are declared but never used within the function 
 
 ```bash
 # Enable unused parameter detection
-searchdeadcode ./app --unused-params
+chazer ./app --unused-params
 ```
 
 This detector is conservative to minimize false positives:
@@ -226,7 +226,7 @@ Detect Android resources (strings, colors, dimensions, styles, etc.) that are de
 
 ```bash
 # Enable unused resource detection
-searchdeadcode ./app --unused-resources
+chazer ./app --unused-resources
 ```
 
 ### How It Works
@@ -247,7 +247,7 @@ searchdeadcode ./app --unused-resources
 ### Example Output
 
 ```bash
-$ searchdeadcode ./my-android-app --unused-resources
+$ chazer ./my-android-app --unused-resources
 
 📦 Unused Android Resources:
   ○ app/src/main/res/values/strings.xml:21 - string 'unused_feature_text'
@@ -263,7 +263,7 @@ Found 6 unused resources (150 total defined, 320 referenced)
 ### Real-World Results
 
 ```bash
-$ searchdeadcode /path/to/android-project --unused-resources
+$ chazer /path/to/android-project --unused-resources
 
 📦 Unused Android Resources:
   ○ app/src/main/res/values/admin_strings.xml:21 - string 'admin_apiMockAddressSaved'
@@ -297,7 +297,7 @@ For more aggressive dead code detection that analyzes individual members within 
 
 ```bash
 # Enable deep analysis
-searchdeadcode ./app --deep
+chazer ./app --deep
 ```
 
 ### Terminal Output Example
@@ -373,13 +373,13 @@ Summary: 3 issues found
 
 ```bash
 # Exclude patterns (glob syntax)
-searchdeadcode ./app --exclude "**/test/**" --exclude "**/generated/**"
+chazer ./app --exclude "**/test/**" --exclude "**/generated/**"
 
 # Retain patterns (never report as dead)
-searchdeadcode ./app --retain "*Activity" --retain "*ViewModel"
+chazer ./app --retain "*Activity" --retain "*ViewModel"
 
 # Combine multiple filters
-searchdeadcode ./app \
+chazer ./app \
   --exclude "**/build/**" \
   --exclude "**/*Test.kt" \
   --retain "*Repository" \
@@ -390,16 +390,16 @@ searchdeadcode ./app \
 
 ```bash
 # Interactive deletion (confirm each item)
-searchdeadcode ./app --delete --interactive
+chazer ./app --delete --interactive
 
 # Batch deletion (select from list, confirm once)
-searchdeadcode ./app --delete
+chazer ./app --delete
 
 # Dry run (preview only, no changes)
-searchdeadcode ./app --delete --dry-run
+chazer ./app --delete --dry-run
 
 # Generate undo script for recovery
-searchdeadcode ./app --delete --undo-script restore.sh
+chazer ./app --delete --undo-script restore.sh
 ```
 
 ### Dry-Run Output Example

@@ -23,7 +23,7 @@ body:
       label: Steps to Reproduce
       description: Steps to reproduce the behavior
       placeholder: |
-        1. Run `searchdeadcode ...`
+        1. Run `chazer ...`
         2. See error
     validations:
       required: true
@@ -54,8 +54,8 @@ body:
   - type: input
     id: version
     attributes:
-      label: SearchDeadCode Version
-      description: Output of `searchdeadcode --version`
+      label: Chazer Version
+      description: Output of `chazer --version`
       placeholder: "0.4.0"
     validations:
       required: true

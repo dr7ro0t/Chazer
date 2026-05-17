@@ -2,16 +2,16 @@
 //!
 //! These tests verify that each detector correctly identifies dead code patterns.
 
-use searchdeadcode::analysis::detectors::{
+use chazer::analysis::ReachabilityAnalyzer;
+use chazer::analysis::detectors::{
     DeepInheritanceDetector, Detector, DuplicateImportDetector, EventBusPatternDetector,
     GlobalMutableStateDetector, PreferIsEmptyDetector, RedundantNullInitDetector,
     RedundantOverrideDetector, RedundantParenthesesDetector, RedundantThisDetector,
     SingleImplInterfaceDetector, UnusedParamDetector, UnusedSealedVariantDetector,
     WriteOnlyDetector,
 };
-use searchdeadcode::analysis::ReachabilityAnalyzer;
-use searchdeadcode::discovery::{FileType, SourceFile};
-use searchdeadcode::graph::GraphBuilder;
+use chazer::discovery::{FileType, SourceFile};
+use chazer::graph::GraphBuilder;
 use std::collections::HashSet;
 use std::path::PathBuf;
 
@@ -21,7 +21,7 @@ fn fixtures_path() -> PathBuf {
 }
 
 /// Build a graph from a Kotlin file
-fn build_kotlin_graph(filename: &str) -> searchdeadcode::graph::Graph {
+fn build_kotlin_graph(filename: &str) -> chazer::graph::Graph {
     let path = fixtures_path().join("kotlin").join(filename);
     if !path.exists() {
         panic!("Fixture not found: {:?}", path);
@@ -35,7 +35,7 @@ fn build_kotlin_graph(filename: &str) -> searchdeadcode::graph::Graph {
 }
 
 /// Get declaration names from the graph
-fn get_declaration_names(graph: &searchdeadcode::graph::Graph) -> Vec<String> {
+fn get_declaration_names(graph: &chazer::graph::Graph) -> Vec<String> {
     graph.declarations().map(|d| d.name.clone()).collect()
 }
 
@@ -227,7 +227,7 @@ mod sealed_variant_tests {
         // Should NOT report interfaces as unused variants
         let interface_issues: Vec<_> = issues
             .iter()
-            .filter(|i| i.declaration.kind == searchdeadcode::graph::DeclarationKind::Interface)
+            .filter(|i| i.declaration.kind == chazer::graph::DeclarationKind::Interface)
             .collect();
 
         assert!(
@@ -704,7 +704,10 @@ mod single_impl_interface_tests {
         let detector = SingleImplInterfaceDetector::new();
         let issues = detector.detect(&graph);
 
-        println!("Single implementation interface issues found: {}", issues.len());
+        println!(
+            "Single implementation interface issues found: {}",
+            issues.len()
+        );
         for issue in &issues {
             println!("  - {}: {}", issue.declaration.name, issue.message);
         }

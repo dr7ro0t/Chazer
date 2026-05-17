@@ -13,13 +13,13 @@ fn fixtures_path() -> PathBuf {
 /// Get the binary name (with .exe on Windows)
 fn binary_name() -> &'static str {
     if cfg!(windows) {
-        "searchdeadcode.exe"
+        "chazer.exe"
     } else {
-        "searchdeadcode"
+        "chazer"
     }
 }
 
-/// Get the path to the searchdeadcode binary
+/// Get the path to the chazer binary
 fn binary_path() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("target")
@@ -27,7 +27,7 @@ fn binary_path() -> PathBuf {
         .join(binary_name())
 }
 
-/// Run searchdeadcode with arguments and return (stdout, stderr, success)
+/// Run chazer with arguments and return (stdout, stderr, success)
 fn run_cli(args: &[&str]) -> (String, String, bool) {
     let binary = binary_path();
     if !binary.exists() {
@@ -74,10 +74,7 @@ fn test_cli_help() {
     let (stdout, _, success) = run_cli(&["--help"]);
 
     assert!(success, "Help should succeed");
-    assert!(
-        stdout.contains("searchdeadcode"),
-        "Should show program name"
-    );
+    assert!(stdout.contains("chazer"), "Should show program name");
     assert!(stdout.contains("--deep"), "Should show --deep option");
     assert!(
         stdout.contains("--parallel"),
@@ -90,10 +87,7 @@ fn test_cli_version() {
     let (stdout, _, success) = run_cli(&["--version"]);
 
     assert!(success, "Version should succeed");
-    assert!(
-        stdout.contains("searchdeadcode"),
-        "Should show program name"
-    );
+    assert!(stdout.contains("chazer"), "Should show program name");
 }
 
 #[test]

@@ -1,13 +1,14 @@
 <div align="center">
 
-<img src="assets/logo.svg" alt="SearchDeadCode Logo" width="120"/>
+<img src="assets/logo.svg" alt="Chazer Logo" width="120"/>
 
-# SearchDeadCode
+# Chazer 
+(formerly SearchDeadCode)
 
 **Find and eliminate dead code in Android projects**
 
 [![MSRV](https://img.shields.io/badge/MSRV-1.92-blue.svg)](https://blog.rust-lang.org/2025/12/11/Rust-1.92.0/)
-[![GitHub Action](https://img.shields.io/badge/GitHub_Action-available-2088FF?logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/searchdeadcode)
+[![GitHub Action](https://img.shields.io/badge/GitHub_Action-available-2088FF?logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/chazer)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A blazingly fast CLI tool written in Rust to detect and safely remove dead/unused code in Android projects (Kotlin &
@@ -15,7 +16,7 @@ Java).
 
 Inspired by [Periphery](https://github.com/peripheryapp/periphery) for Swift.
 
-<img src="assets/demo.svg" alt="SearchDeadCode Demo" width="600"/>
+<img src="assets/demo.svg" alt="Chazer Demo" width="600"/>
 
 *See it in action: analyze an Android project in seconds*
 
@@ -32,7 +33,7 @@ Inspired by [Periphery](https://github.com/peripheryapp/periphery) for Swift.
 - [CLI Reference](#-cli-reference)
 - [Configuration](#-configuration)
 - [Detection Types](#-detection-types)
-- [When NOT to Use SearchDeadCode](#-when-not-to-use-searchdeadcode)
+- [When NOT to Use Chazer](#-when-not-to-use-chazer)
 - [Troubleshooting](#-troubleshooting)
 - [Contributing](#-contributing)
 
@@ -57,9 +58,9 @@ Inspired by [Periphery](https://github.com/peripheryapp/periphery) for Swift.
 
 ## 📊 Comparison with Alternatives
 
-How does SearchDeadCode compare to other tools?
+How does Chazer compare to other tools?
 
-| Feature                  |  SearchDeadCode   | Android Lint |  R8/ProGuard  |  Detekt   |   IntelliJ    |
+| Feature                  |  Chazer   | Android Lint |  R8/ProGuard  |  Detekt   |   IntelliJ    |
 |--------------------------|:-----------------:|:------------:|:-------------:|:---------:|:-------------:|
 | **Speed**                |  ⚡ <1s/1k files   |   🐢 Slow    | 🔨 Build-time | 🐢 Medium |   🐢 Medium   |
 | **Kotlin-first**         |     ✅ Native      |  ⚠️ Partial  |     ✅ Yes     |   ✅ Yes   |     ✅ Yes     |
@@ -77,13 +78,13 @@ How does SearchDeadCode compare to other tools?
 
 | Tool               | Best For                                                                      |
 |--------------------|-------------------------------------------------------------------------------|
-| **SearchDeadCode** | Fast CI checks, pre-commit hooks, quick project audits, Kotlin-first projects |
+| **Chazer** | Fast CI checks, pre-commit hooks, quick project audits, Kotlin-first projects |
 | **Android Lint**   | Comprehensive Android-specific checks beyond dead code                        |
 | **R8/ProGuard**    | Production builds with 100% accuracy (but no interactive deletion)            |
 | **Detekt**         | Kotlin code style and complexity analysis                                     |
 | **IntelliJ**       | Interactive development with refactoring support                              |
 
-**Pro tip**: Use SearchDeadCode for fast feedback during development, then validate with R8's `usage.txt` before major
+**Pro tip**: Use Chazer for fast feedback during development, then validate with R8's `usage.txt` before major
 cleanups.
 
 ## ⚡ Performance
@@ -102,26 +103,26 @@ Target performance goals (achieved):
 
 ```bash
 brew tap dr7ro0t/tap
-brew install searchdeadcode
+brew install chazer
 ```
 
 ### Via Cargo
 
 ```bash
-cargo install searchdeadcode
+cargo install chazer
 ```
 
 ### Pre-built Binaries
 
-Download the latest release from [GitHub Releases](https://github.com/dr7ro0t/SearchDeadCode/releases).
+Download the latest release from [GitHub Releases](https://github.com/dr7ro0t/Chazer/releases).
 
 Available binaries:
 
-- `searchdeadcode-linux-x86_64` - Linux (Intel/AMD 64-bit)
-- `searchdeadcode-linux-aarch64` - Linux (ARM 64-bit)
-- `searchdeadcode-macos-x86_64` - macOS (Intel)
-- `searchdeadcode-macos-aarch64` - macOS (Apple Silicon)
-- `searchdeadcode-windows-x86_64.exe` - Windows (64-bit)
+- `chazer-linux-x86_64` - Linux (Intel/AMD 64-bit)
+- `chazer-linux-aarch64` - Linux (ARM 64-bit)
+- `chazer-macos-x86_64` - macOS (Intel)
+- `chazer-macos-aarch64` - macOS (Apple Silicon)
+- `chazer-windows-x86_64.exe` - Windows (64-bit)
 
 #### macOS: Bypass Gatekeeper Warning
 
@@ -130,8 +131,8 @@ macOS may show a security warning because the binary isn't code-signed. To run i
 **Option 1: Remove quarantine attribute (recommended)**
 
 ```bash
-xattr -d com.apple.quarantine ~/Downloads/searchdeadcode-macos-*
-chmod +x ~/Downloads/searchdeadcode-macos-*
+xattr -d com.apple.quarantine ~/Downloads/chazer-macos-*
+chmod +x ~/Downloads/chazer-macos-*
 ```
 
 **Option 2: Right-click → Open**
@@ -148,8 +149,8 @@ chmod +x ~/Downloads/searchdeadcode-macos-*
 ### From Source
 
 ```bash
-git clone https://github.com/dr7ro0t/SearchDeadCode
-cd SearchDeadCode
+git clone https://github.com/dr7ro0t/Chazer
+cd Chazer
 cargo install --path .
 ```
 
@@ -157,18 +158,18 @@ cargo install --path .
 
 ```bash
 # Analyze your Android project
-searchdeadcode ./my-android-app
+chazer ./my-android-app
 
 # Preview what would be deleted
-searchdeadcode ./my-android-app --delete --dry-run
+chazer ./my-android-app --delete --dry-run
 ```
 
 ### Example Output
 
 ```
-$ searchdeadcode ./my-app --min-confidence high
+$ chazer ./my-app --min-confidence high
 
-SearchDeadCode v0.4.0
+Chazer v0.4.0
 Discovering files...
 Found 247 files to analyze
 Parsing files...
@@ -203,7 +204,7 @@ Estimated removable lines: ~340
 ## 📖 CLI Reference
 
 ```
-searchdeadcode [OPTIONS] [PATH]
+chazer [OPTIONS] [PATH]
 
 Arguments:
   [PATH]  Path to the project directory to analyze [default: .]
@@ -248,19 +249,19 @@ Options:
 
 ```bash
 # Basic analysis
-searchdeadcode /path/to/android/project
+chazer /path/to/android/project
 
 # Deep analysis (more aggressive, analyzes individual members)
-searchdeadcode ./app --deep
+chazer ./app --deep
 
 # With exclusions
-searchdeadcode ./app \
+chazer ./app \
   --exclude "**/build/**" \
   --exclude "**/test/**" \
   --exclude "**/generated/**"
 
 # Full hybrid analysis (static + dynamic + R8)
-searchdeadcode ./app \
+chazer ./app \
   --deep \
   --coverage build/reports/jacoco.xml \
   --proguard-usage app/build/outputs/mapping/release/usage.txt \
@@ -268,39 +269,39 @@ searchdeadcode ./app \
   --min-confidence high
 
 # JSON output for CI/CD
-searchdeadcode ./app \
+chazer ./app \
   --format json \
   --output dead-code-report.json
 
 # SARIF for GitHub Code Scanning
-searchdeadcode ./app \
+chazer ./app \
   --format sarif \
   --output results.sarif
 
 # Safe delete with dry-run preview
-searchdeadcode ./app --delete --dry-run
+chazer ./app --delete --dry-run
 
 # Detect unused Android resources
-searchdeadcode ./app --unused-resources
+chazer ./app --unused-resources
 
 # Detect unused function parameters
-searchdeadcode ./app --unused-params
+chazer ./app --unused-params
 
 # Full analysis with all enhanced detection
-searchdeadcode ./app \
+chazer ./app \
   --deep \
   --unused-params \
   --unused-resources \
   --detect-cycles
 
 # Interactive deletion with undo script
-searchdeadcode ./app \
+chazer ./app \
   --delete \
   --interactive \
   --undo-script restore.sh
 
 # Only show confirmed dead code (highest confidence)
-searchdeadcode ./app \
+chazer ./app \
   --coverage coverage.xml \
   --proguard-usage usage.txt \
   --runtime-only \
@@ -313,13 +314,13 @@ Generate tab completions for your shell:
 
 ```bash
 # Bash
-searchdeadcode --completions bash > ~/.local/share/bash-completion/completions/searchdeadcode
+chazer --completions bash > ~/.local/share/bash-completion/completions/chazer
 
 # Zsh
-searchdeadcode --completions zsh > ~/.zfunc/_searchdeadcode
+chazer --completions zsh > ~/.zfunc/_chazer
 
 # Fish
-searchdeadcode --completions fish > ~/.config/fish/completions/searchdeadcode.fish
+chazer --completions fish > ~/.config/fish/completions/chazer.fish
 ```
 
 ## 🔄 CI/CD Integration
@@ -341,7 +342,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Detect Dead Code
-        uses: dr7ro0t/SearchDeadCode@v0
+        uses: dr7ro0t/Chazer@v0
         with:
           path: '.'
           fail-on-findings: 'true'    # Fail CI on dead code
@@ -356,7 +357,7 @@ jobs:
 | Input              | Description                                              | Default    |
 |--------------------|----------------------------------------------------------|------------|
 | `path`             | Path to analyze                                          | `.`        |
-| `version`          | SearchDeadCode version                                   | `latest`   |
+| `version`          | Chazer version                                   | `latest`   |
 | `format`           | Output format: `terminal`, `json`, `sarif`               | `terminal` |
 | `output`           | Output file path                                         | -          |
 | `args`             | Additional CLI arguments                                 | -          |
@@ -369,8 +370,8 @@ jobs:
 deadcode:
   stage: analyze
   script:
-    - cargo install searchdeadcode
-    - searchdeadcode . --format json --output deadcode.json
+    - cargo install chazer
+    - chazer . --format json --output deadcode.json
   artifacts:
     paths:
       - deadcode.json
@@ -380,7 +381,7 @@ deadcode:
 
 ### Configuration File
 
-SearchDeadCode looks for configuration in these locations (in order):
+Chazer looks for configuration in these locations (in order):
 
 1. Path specified via `--config` flag
 2. `.deadcode.yml` / `.deadcode.yaml` in project root
@@ -691,16 +692,16 @@ exclude:
   - "**/*Spec.kt"
 ```
 
-## 🚫 When NOT to Use SearchDeadCode
+## 🚫 When NOT to Use Chazer
 
-Being honest about limitations helps you choose the right tool. **Don't use SearchDeadCode if:**
+Being honest about limitations helps you choose the right tool. **Don't use Chazer if:**
 
 ### ❌ You Need 100% Accuracy
 
 Static analysis cannot catch everything. If you need guaranteed accuracy:
 
 - Use R8/ProGuard's `usage.txt` output (generated during release builds)
-- SearchDeadCode can validate against `usage.txt` with `--proguard-usage`
+- Chazer can validate against `usage.txt` with `--proguard-usage`
 
 ### ❌ Heavy Reflection Usage
 
@@ -715,7 +716,7 @@ Class.forName("com.example.MyClass").newInstance()
 
 ### ❌ Pure Java Projects
 
-SearchDeadCode is Kotlin-first. While Java is supported, it shines on:
+Chazer is Kotlin-first. While Java is supported, it shines on:
 
 - Kotlin projects
 - Mixed Kotlin/Java Android projects
@@ -724,16 +725,16 @@ For pure Java, consider [UCDetector](https://ucdetector.org/) or IntelliJ's buil
 
 ### ❌ You Want IDE Integration
 
-SearchDeadCode is a CLI tool. If you prefer IDE integration:
+Chazer is a CLI tool. If you prefer IDE integration:
 
 - Use IntelliJ/Android Studio's built-in "Unused declaration" inspection
-- Or run SearchDeadCode in watch mode alongside your IDE
+- Or run Chazer in watch mode alongside your IDE
 
 ### ❌ Dynamic Languages / KMP JS Target
 
 We analyze JVM bytecode patterns. JavaScript or other dynamic targets aren't supported.
 
-### ✅ But DO Use SearchDeadCode If You Want:
+### ✅ But DO Use Chazer If You Want:
 
 - **Speed**: Analyze 10k files in seconds, not minutes
 - **CI Integration**: Block PRs that add dead code

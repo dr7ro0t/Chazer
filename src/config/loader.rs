@@ -6,7 +6,7 @@ use miette::{IntoDiagnostic, Result, WrapErr};
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
-/// Configuration for SearchDeadCode analysis
+/// Configuration for Chazer analysis
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Config {

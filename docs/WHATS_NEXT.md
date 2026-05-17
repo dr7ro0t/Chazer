@@ -25,7 +25,7 @@ Planned features and improvements for future releases:
 - [x] **Baseline support** - Ignore existing dead code, only flag new issues (`--baseline`)
 - [ ] **Language Server Protocol (LSP)** - Real-time dead code highlighting in editors
 - [ ] **IntelliJ/Android Studio plugin** - Native IDE integration
-- [x] **GitHub Action** - Pre-built action for easy CI setup (`uses: dr7ro0t/SearchDeadCode@v0`)
+- [x] **GitHub Action** - Pre-built action for easy CI setup (`uses: dr7ro0t/Chazer@v0`)
 - [x] **Pre-commit hook** - Block commits introducing dead code (`scripts/pre-commit-hook.sh`)
 
 #### Phase 9: Write-Only Detection ✅ (Mostly Complete)

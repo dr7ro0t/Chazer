@@ -1,4 +1,4 @@
-//! Watch mode for SearchDeadCode
+//! Watch mode for Chazer
 //!
 //! This module provides functionality for continuously monitoring
 //! file changes and re-running analysis automatically.
@@ -7,7 +7,7 @@
 
 use colored::Colorize;
 use notify::RecursiveMode;
-use notify_debouncer_mini::{new_debouncer, DebouncedEventKind};
+use notify_debouncer_mini::{DebouncedEventKind, new_debouncer};
 use std::path::Path;
 use std::sync::mpsc::channel;
 use std::time::Duration;

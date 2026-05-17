@@ -1,4 +1,4 @@
-name: 'SearchDeadCode'
+name: 'Chazer'
 author: 'DryRoot'
 description: 'Detect dead/unused code in Android projects (Kotlin & Java). Fast static analysis powered by tree-sitter.'
 
@@ -12,7 +12,7 @@ inputs:
     required: false
     default: '.'
   version:
-    description: 'Version of SearchDeadCode to use (e.g., "0.4.0" or "latest")'
+    description: 'Version of Chazer to use (e.g., "0.4.0" or "latest")'
     required: false
     default: 'latest'
   format:
@@ -24,7 +24,7 @@ inputs:
     required: false
     default: ''
   args:
-    description: 'Additional arguments to pass to searchdeadcode'
+    description: 'Additional arguments to pass to chazer'
     required: false
     default: ''
   fail-on-findings:
@@ -92,18 +92,18 @@ runs:
       run: |
         VERSION="${{ inputs.version }}"
         if [ "$VERSION" = "latest" ]; then
-          VERSION=$(gh api repos/dr7ro0t/SearchDeadCode/releases/latest --jq '.tag_name' 2>/dev/null | sed 's/^v//' || echo "0.4.0")
+          VERSION=$(gh api repos/dr7ro0t/Chazer/releases/latest --jq '.tag_name' 2>/dev/null | sed 's/^v//' || echo "0.4.0")
         fi
         echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-    - name: Cache SearchDeadCode binary
+    - name: Cache Chazer binary
       id: cache
       uses: actions/cache@v4
       with:
-        path: ~/.searchdeadcode/bin
-        key: searchdeadcode-${{ steps.version.outputs.version }}-${{ steps.detect.outputs.target }}
+        path: ~/.chazer/bin
+        key: chazer-${{ steps.version.outputs.version }}-${{ steps.detect.outputs.target }}
 
-    - name: Download SearchDeadCode
+    - name: Download Chazer
       if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
       run: |
@@ -111,34 +111,34 @@ runs:
         TARGET="${{ steps.detect.outputs.target }}"
         OS="${{ steps.detect.outputs.os }}"
 
-        mkdir -p ~/.searchdeadcode/bin
+        mkdir -p ~/.chazer/bin
 
         if [ "$OS" = "Windows" ]; then
-          BINARY_NAME="searchdeadcode-${TARGET}.exe"
+          BINARY_NAME="chazer-${TARGET}.exe"
         else
-          BINARY_NAME="searchdeadcode-${TARGET}"
+          BINARY_NAME="chazer-${TARGET}"
         fi
 
-        DOWNLOAD_URL="https://github.com/dr7ro0t/SearchDeadCode/releases/download/v${VERSION}/${BINARY_NAME}"
+        DOWNLOAD_URL="https://github.com/dr7ro0t/Chazer/releases/download/v${VERSION}/${BINARY_NAME}"
 
-        echo "Downloading SearchDeadCode v${VERSION} for ${TARGET}..."
+        echo "Downloading Chazer v${VERSION} for ${TARGET}..."
         echo "URL: ${DOWNLOAD_URL}"
 
-        curl -fsSL "$DOWNLOAD_URL" -o ~/.searchdeadcode/bin/searchdeadcode
-        chmod +x ~/.searchdeadcode/bin/searchdeadcode
+        curl -fsSL "$DOWNLOAD_URL" -o ~/.chazer/bin/chazer
+        chmod +x ~/.chazer/bin/chazer
 
         echo "Downloaded successfully!"
 
     - name: Add to PATH
       shell: bash
-      run: echo "$HOME/.searchdeadcode/bin" >> $GITHUB_PATH
+      run: echo "$HOME/.chazer/bin" >> $GITHUB_PATH
 
-    - name: Run SearchDeadCode analysis
+    - name: Run Chazer analysis
       id: analyze
       shell: bash
       run: |
         # Build command
-        CMD="searchdeadcode"
+        CMD="chazer"
         CMD="$CMD --min-confidence ${{ inputs.min-confidence }}"
 
         # Add format
@@ -153,8 +153,8 @@ runs:
             echo "sarif_file=$OUTPUT" >> $GITHUB_OUTPUT
           fi
         elif [ "$FORMAT" = "sarif" ]; then
-          CMD="$CMD --output searchdeadcode-results.sarif"
-          echo "sarif_file=searchdeadcode-results.sarif" >> $GITHUB_OUTPUT
+          CMD="$CMD --output chazer-results.sarif"
+          echo "sarif_file=chazer-results.sarif" >> $GITHUB_OUTPUT
         fi
 
         # Add additional args

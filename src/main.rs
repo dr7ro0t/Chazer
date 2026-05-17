@@ -78,9 +78,9 @@ use discovery::FileFinder;
 use graph::{GraphBuilder, ParallelGraphBuilder};
 use report::Reporter;
 
-/// SearchDeadCode - Fast dead code detection for Android (Kotlin/Java)
+/// Chazer - Fast dead code detection for Android (Kotlin/Java)
 #[derive(Parser, Debug)]
-#[command(name = "searchdeadcode")]
+#[command(name = "chazer")]
 #[command(author, version, about, long_about = None)]
 struct Cli {
     /// Path to the project directory to analyze
@@ -264,7 +264,7 @@ struct Cli {
     #[arg(long)]
     clear_cache: bool,
 
-    /// Custom cache file path (default: .searchdeadcode-cache.json)
+    /// Custom cache file path (default: .chazer-cache.json)
     #[arg(long, value_name = "FILE")]
     cache_path: Option<PathBuf>,
 
@@ -368,7 +368,7 @@ fn main() -> Result<()> {
     // Initialize logging
     init_logging(cli.verbose, cli.quiet);
 
-    info!("SearchDeadCode v{}", env!("CARGO_PKG_VERSION"));
+    info!("Chazer v{}", env!("CARGO_PKG_VERSION"));
 
     // Load configuration
     let config = load_config(&cli)?;

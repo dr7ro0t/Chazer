@@ -1,4 +1,4 @@
-//! Tests anti-faux-positifs pour SearchDeadCode
+//! Tests anti-faux-positifs pour Chazer
 //!
 //! Ces tests vérifient que le système NE SIGNALE PAS comme "dead code"
 //! du code qui est en réalité utilisé via des mécanismes indirects.
@@ -13,13 +13,13 @@
 //! 7. Tests et mocks
 //! 8. JNI et code natif
 
-use searchdeadcode::analysis::detectors::{
+use chazer::analysis::ReachabilityAnalyzer;
+use chazer::analysis::detectors::{
     Detector, RedundantOverrideDetector, UnusedParamDetector, UnusedSealedVariantDetector,
     WriteOnlyDetector,
 };
-use searchdeadcode::analysis::ReachabilityAnalyzer;
-use searchdeadcode::discovery::{FileType, SourceFile};
-use searchdeadcode::graph::GraphBuilder;
+use chazer::discovery::{FileType, SourceFile};
+use chazer::graph::GraphBuilder;
 use std::collections::HashSet;
 use std::path::PathBuf;
 
@@ -35,7 +35,7 @@ fn create_temp_kotlin_file(content: &str) -> (tempfile::TempDir, PathBuf) {
     (temp_dir, file_path)
 }
 
-fn build_graph_from_content(content: &str) -> searchdeadcode::graph::Graph {
+fn build_graph_from_content(content: &str) -> chazer::graph::Graph {
     let (_temp_dir, file_path) = create_temp_kotlin_file(content);
     let source = SourceFile::new(file_path, FileType::Kotlin);
     let mut builder = GraphBuilder::new();
@@ -46,7 +46,7 @@ fn build_graph_from_content(content: &str) -> searchdeadcode::graph::Graph {
 }
 
 #[allow(dead_code)]
-fn get_dead_code_names(graph: &searchdeadcode::graph::Graph, entry_point: &str) -> HashSet<String> {
+fn get_dead_code_names(graph: &chazer::graph::Graph, entry_point: &str) -> HashSet<String> {
     let entry_points: HashSet<_> = graph
         .declarations()
         .filter(|d| d.name == entry_point)

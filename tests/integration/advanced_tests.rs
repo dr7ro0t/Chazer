@@ -1,4 +1,4 @@
-//! Advanced Integration Tests for SearchDeadCode
+//! Advanced Integration Tests for Chazer
 //!
 //! Ce fichier contient les 40 meilleurs tests couvrant:
 //! - Parsing complexe (8 tests)
@@ -9,9 +9,9 @@
 //! - Performance & Stress (3 tests)
 //! - Rapports & Output (3 tests)
 
-use searchdeadcode::analysis::detectors::{Detector, WriteOnlyDetector};
-use searchdeadcode::discovery::{FileType, SourceFile};
-use searchdeadcode::graph::GraphBuilder;
+use chazer::analysis::detectors::{Detector, WriteOnlyDetector};
+use chazer::discovery::{FileType, SourceFile};
+use chazer::graph::GraphBuilder;
 use std::path::PathBuf;
 use std::time::Instant;
 
@@ -22,7 +22,7 @@ fn create_temp_file(filename: &str, content: &str) -> (tempfile::TempDir, PathBu
     (temp_dir, file_path)
 }
 
-fn build_graph_from_content(content: &str) -> searchdeadcode::graph::Graph {
+fn build_graph_from_content(content: &str) -> chazer::graph::Graph {
     let (_temp_dir, file_path) = create_temp_file("test.kt", content);
     let source = SourceFile::new(file_path, FileType::Kotlin);
     let mut builder = GraphBuilder::new();
@@ -32,7 +32,7 @@ fn build_graph_from_content(content: &str) -> searchdeadcode::graph::Graph {
     builder.build()
 }
 
-fn build_graph_from_java(content: &str) -> searchdeadcode::graph::Graph {
+fn build_graph_from_java(content: &str) -> chazer::graph::Graph {
     let (_temp_dir, file_path) = create_temp_file("Test.java", content);
     let source = SourceFile::new(file_path, FileType::Java);
     let mut builder = GraphBuilder::new();
@@ -44,7 +44,7 @@ fn build_graph_from_java(content: &str) -> searchdeadcode::graph::Graph {
 
 fn build_multi_file_graph(
     files: Vec<(&str, &str, FileType)>,
-) -> (tempfile::TempDir, searchdeadcode::graph::Graph) {
+) -> (tempfile::TempDir, chazer::graph::Graph) {
     let temp_dir = tempfile::tempdir().expect("Failed to create temp dir");
     let mut builder = GraphBuilder::new();
 
