@@ -12,7 +12,7 @@ inputs:
     required: false
     default: '.'
   version:
-    description: 'Version of Chazer to use (e.g., "0.4.0" or "latest")'
+    description: 'Version of Chazer to use (e.g., "0.5.1" or "latest")'
     required: false
     default: 'latest'
   format:
@@ -92,7 +92,7 @@ runs:
       run: |
         VERSION="${{ inputs.version }}"
         if [ "$VERSION" = "latest" ]; then
-          VERSION=$(gh api repos/dr7ro0t/Chazer/releases/latest --jq '.tag_name' 2>/dev/null | sed 's/^v//' || echo "0.4.0")
+          VERSION=$(gh api repos/dr7ro0t/Chazer/releases/latest --jq '.tag_name' 2>/dev/null | sed 's/^v//' || echo "0.5.1")
         fi
         echo "version=$VERSION" >> $GITHUB_OUTPUT
 

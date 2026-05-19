@@ -106,12 +106,6 @@ brew tap dr7ro0t/tap
 brew install chazer
 ```
 
-### Via Cargo
-
-```bash
-cargo install chazer
-```
-
 ### Pre-built Binaries
 
 Download the latest release from [GitHub Releases](https://github.com/dr7ro0t/Chazer/releases).
@@ -169,7 +163,7 @@ chazer ./my-android-app --delete --dry-run
 ```
 $ chazer ./my-app --min-confidence high
 
-Chazer v0.4.0
+Chazer v0.5.1
 Discovering files...
 Found 247 files to analyze
 Parsing files...

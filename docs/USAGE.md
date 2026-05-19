@@ -291,6 +291,39 @@ exclude:
   - "**/google-services.xml"
 ```
 
+## Anti-Pattern Detection
+
+Chazer v0.5.1 introduces a comprehensive suite of anti-pattern detectors (AP001-AP034) to help identify not just dead code, but also code smells, architectural issues, and performance bottlenecks.
+
+### Running Detectors
+
+```bash
+# Run all anti-pattern detectors
+chazer ./app --anti-patterns
+
+# Run specific categories
+chazer ./app --architecture-patterns  # AP001-AP006
+chazer ./app --kotlin-patterns        # AP007-AP010, AP021-AP025
+chazer ./app --performance-patterns   # AP011-AP015
+chazer ./app --android-patterns       # AP016-AP020, AP026-AP030
+chazer ./app --compose-patterns       # AP031-AP034
+
+# Combine with deep dead code analysis
+chazer ./app --deep --anti-patterns
+```
+
+### Detector Categories
+
+| Category | Flag | Focus |
+|----------|------|-------|
+| **Architecture** | `--architecture-patterns` | Inheritance depth, EventBus usage, global state |
+| **Kotlin** | `--kotlin-patterns` | Lateinit abuse, scope functions, nullability |
+| **Performance** | `--performance-patterns` | Memory leaks, loop allocations, long methods |
+| **Android** | `--android-patterns` | ViewModel logic, unclosed resources, main thread DB |
+| **Compose** | `--compose-patterns` | State management, LaunchedEffect keys, NavController |
+
+For a full list of all 50+ detectors and their descriptions, see [DETECTORS.md](./DETECTORS.md).
+
 ## Deep Analysis Mode
 
 For more aggressive dead code detection that analyzes individual members within classes:
