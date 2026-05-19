@@ -9,6 +9,7 @@
 
 [![MSRV](https://img.shields.io/badge/MSRV-1.92-blue.svg)](https://blog.rust-lang.org/2025/12/11/Rust-1.92.0/)
 [![GitHub Action](https://img.shields.io/badge/GitHub_Action-available-2088FF?logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/chazer)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/dr7ro0t/Chazer/badge)](https://scorecard.dev/viewer/?uri=github.com/dr7ro0t/Chazer)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A blazingly fast CLI tool written in Rust to detect and safely remove dead/unused code in Android projects (Kotlin &
