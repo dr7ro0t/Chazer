@@ -56,7 +56,7 @@ body:
     attributes:
       label: Chazer Version
       description: Output of `chazer --version`
-      placeholder: "0.4.0"
+      placeholder: "0.5.1"
     validations:
       required: true
 

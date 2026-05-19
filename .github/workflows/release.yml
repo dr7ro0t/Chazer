@@ -100,8 +100,7 @@ jobs:
       - name: Generate SBOM attestation
         uses: actions/attest-sbom@v3
         with:
-          subject-name: chazer
-          subject-digest: sha256:${{ github.sha }}
+          subject-path: sbom.cdx.json
           sbom-path: sbom.cdx.json
 
       - name: Upload SBOM artifact

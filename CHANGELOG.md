@@ -5,13 +5,32 @@ All notable changes to Chazer will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.5.1] - 2026-05-19
 
-### Added
-- OpenSSF Scorecard badge
-- Downloads badge
-- MSRV (Minimum Supported Rust Version) policy: 1.70+
-- This CHANGELOG.md file
+### Added - Massive Detector Suite Expansion
+- **40+ New Detectors**: Added a comprehensive suite of static analysis detectors:
+  - **Kotlin Anti-Patterns**: `lateinit-abuse`, `nullability-overload`, `redundant-this`, `scope-function-chaining`, etc
+  - **Android Code Smells**: `wakelock-abuse`, `unclosed-resource`, `main-thread-database`, `memory-leak-risk`
+  - **Jetpack Compose**: `launchedeffect-without-key`, `state-without-remember`, `business-logic-composable`
+  - **Performance & Memory**: `object-allocation-loop`, `heavy-viewmodel`, `collection-without-sequence`
+  - **Write-only Resources**: Specific detectors for write-only `SharedPreferences` and Room `DAO` methods
+- **Enhanced Reporting Engine**: 
+  - New output modes: `grouped`, `compact`, and `summary`
+  - Interactive terminal colors and improved progress indicators
+
+### Changed
+- Optimized deep analysis complexity from **O(n²)** to **O(n)**, significantly speeding up large project scans
+- Migrated to **Rust Edition 2024** and updated MSRV to **1.92.0**
+- Enabled `incremental` mode, `parallel` execution, and `deep` analysis by default
+- Improved detection for DataBinding, ViewBinding, and modern Android components
+
+### Fixed
+- Fixed `tree-sitter-kotlin` grammar parsing bugs for complex expressions
+- Resolved false positives in private property setter detection
+- Fixed JSON output corruption in certain edge cases
+- Improved `--retain` wildcard matching for fully qualified names
+- Fixed borrow checker issues in data binding entry point detection
+- Deterministic sorting for baseline issues to prevent CI churn
 
 ## [0.4.0] - 2024-12-07
 
@@ -124,7 +143,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Homebrew tap for easy installation
 - GitHub Action for CI integration
 
-[Unreleased]: https://github.com/dr7ro0t/Chazer/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/dr7ro0t/Chazer/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/dr7ro0t/Chazer/compare/v0.4.0...v0.5.1
 [0.4.0]: https://github.com/dr7ro0t/Chazer/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/dr7ro0t/Chazer/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/dr7ro0t/Chazer/compare/v0.1.0...v0.2.0
